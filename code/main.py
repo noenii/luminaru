@@ -7,7 +7,9 @@ from helpers.funcs import setup_logging
 from cogs.commands import register_commands
 from events import register_events
 
-intents = discord.Intents.all()
+intents = discord.Intents.default()
+intents.message_content = True
+intents.members = True
 
 bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 
@@ -22,7 +24,7 @@ def console_listener():
 
         if cmd == "quit":
             if bot.loop.is_running():
-                bot.system_logger.info("Bot Shutdown"),
+                bot.system_logger.info("Bot Shutdown")
                 asyncio.run_coroutine_threadsafe(
                     bot.close(),
                     bot.loop
@@ -35,6 +37,7 @@ def console_listener():
 async def main():
     register_commands(bot)      # only prefixes rn, slash cmds later
     register_events(bot)
+    print(bot.commands)
 
     threading.Thread(target=console_listener, daemon=True).start()
 

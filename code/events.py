@@ -39,6 +39,7 @@ def register_events(bot):
 
     @bot.event
     async def on_message(message):
+        print(message.content)
         if message.author == bot.user:
             return
 
