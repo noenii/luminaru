@@ -11,7 +11,7 @@ def register_commands(bot):
         1/0
 
     @bot.command()
-    async def ping(ctx):
+    async def ping(ctx):    #   i alr made a ping cmd but alr
         start = time.perf_counter()
         msg = await ctx.send("Pinging...")
         end = time.perf_counter()

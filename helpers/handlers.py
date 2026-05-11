@@ -4,13 +4,12 @@ from discord.ext import commands
 from helpers.funcs import send
 from setup.config import ERROR, WARNING
 
-# Note to self: ctx means context
 async def handle_command_not_found(ctx, error):
-    commands = [cmd.name for cmd in ctx.bot.commands]
+    c = [cmd.name for cmd in ctx.bot.commands]
 
-    closeMatches = difflib.get_close_matches(ctx.invoked_with, commands, n=3, cutoff=0.7)
+    m = difflib.get_close_matches(ctx.invoked_with, c, n=3, cutoff=0.7)
 
-    s = ("\n".join(f"`{i}`" for i in closeMatches) if closeMatches else "No similar commands found.")
+    s = ("\n".join(f"`{i}`" for i in m) if m else "No similar commands found.")
 
     return await send(
         ctx,

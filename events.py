@@ -1,4 +1,4 @@
-import discord, time, difflib
+import discord, time
 
 from discord.ext import commands
 from datetime import datetime, timezone
@@ -39,7 +39,7 @@ def register_events(bot):
 
     @bot.event
     async def on_message(message):
-        print(message.content)
+        # print(message.content)    NO BRO
         if message.author == bot.user:
             return
 

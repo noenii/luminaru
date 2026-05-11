@@ -5,44 +5,32 @@ from datetime import datetime, timezone
 from setup.config import EMBED_COLOR, SUCCESS, STAFF
 
 def setup_logging():
-    os.makedirs("logs", exist_ok=True)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
 
-    fmt = logging.Formatter(
-        "%(levelname)s - %(message)s - %(asctime)s"
-    )
+    project_root = os.path.abspath(os.path.join(script_dir, ".."))
 
-    def build_logger(name, file, level):
+    log_dir = os.path.join(project_root, "logs")
+
+    os.makedirs(log_dir, exist_ok=True)
+
+    fmt = logging.Formatter("%(levelname)s - %(message)s - %(asctime)s")
+
+    def build_logger(name, filename, level):
         logger = logging.getLogger(name)
         logger.setLevel(level)
 
         if not logger.handlers:
-            handler = logging.FileHandler(
-                f"logs/{file}",
-                encoding="utf-8"
-            )
+            file_path = os.path.join(log_dir, filename)
 
+            handler = logging.FileHandler(file_path, encoding="utf-8")
             handler.setFormatter(fmt)
             logger.addHandler(handler)
 
         return logger
 
-    system_logger = build_logger(
-        "system",
-        "system.log",
-        logging.INFO
-    )
-
-    command_logger = build_logger(
-        "commands",
-        "commands.log",
-        logging.INFO
-    )
-
-    error_logger = build_logger(
-        "errors",
-        "errors.log",
-        logging.ERROR
-    )
+    system_logger = build_logger("system", "system.log", logging.INFO)
+    command_logger = build_logger("commands", "commands.log", logging.INFO)
+    error_logger = build_logger("errors", "errors.log", logging.ERROR)
 
     return system_logger, command_logger, error_logger
 

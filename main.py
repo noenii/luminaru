@@ -4,7 +4,7 @@ from discord.ext import commands
 
 from setup.config import TOKEN, PREFIX
 from helpers.funcs import setup_logging
-from cogs.commands import register_commands
+from commands import register_commands
 from events import register_events
 
 intents = discord.Intents.default()
@@ -22,22 +22,19 @@ def console_listener():
     while True:
         cmd = input().lower().strip()
 
-        if cmd == "quit":
-            if bot.loop.is_running():
-                bot.system_logger.info("Bot Shutdown")
-                asyncio.run_coroutine_threadsafe(
-                    bot.close(),
-                    bot.loop
-                )
-
-            time.sleep(1)
-            print("\nShutdown successful.")
-            break
+        future = asyncio.run_coroutine_threadsafe(bot.close(), bot.loop)
+        try:
+            future.result(timeout=10)
+        except Exception as e:
+            print(f"Error during shutdown: {e}")
+        bot.system_logger.info("Bot Shutdown")
+        print("\nShutdown successful.")
+        break
 
 async def main():
     register_commands(bot)      # only prefixes rn, slash cmds later
     register_events(bot)
-    print(bot.commands)
+    # print(bot.commands)   SON WHY
 
     threading.Thread(target=console_listener, daemon=True).start()
 
