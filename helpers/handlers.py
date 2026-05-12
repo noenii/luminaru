@@ -15,7 +15,8 @@ async def handle_command_not_found(ctx, error):
         ctx,
         f"{ERROR}  404! Command Not Found! >:(",
         f"The command does not exist or was typed incorrectly!\n> Closest Command/s: {s}",
-        WARNING
+        WARNING,
+        footer=False
     )
 
 async def handle_missing_required_argument(ctx, error):
@@ -26,7 +27,8 @@ async def handle_missing_required_argument(ctx, error):
         ctx,
         f"{ERROR}  400! Missing Required Argument(s)! >:(",
         f"Missing Required Argument/s!\n> Correct Usage: `{u}`",
-        WARNING
+        WARNING,
+        footer=False
     )
 
 async def handle_bad_argument(ctx, error):
@@ -36,7 +38,8 @@ async def handle_bad_argument(ctx, error):
         ctx,
         f"{ERROR}  400! Invalid Arg/Args >:(",
         f"Invalid Argument/s!\n> Details: `{error}`\n> Usage: `{u}`",
-        WARNING
+        WARNING,
+        footer=False
     )
 
 async def handle_missing_permissions(ctx, error):
@@ -46,7 +49,8 @@ async def handle_missing_permissions(ctx, error):
         ctx,
         f"{ERROR}  403! You can't use this command! >:(",
         f"You are missing permissions to use this command!\n> Permission/s: `{p}`",
-        WARNING
+        WARNING,
+        footer=False
     )
 
 async def handle_missing_role(ctx, error):
@@ -54,7 +58,8 @@ async def handle_missing_role(ctx, error):
         ctx,
         f"{ERROR}  403! Missing Role! >:(",
         f"You don't have a required role!\n> Role: `{error.missing_role}`",
-        WARNING
+        WARNING,
+        footer=False
     )
 
 async def handle_missing_any_role(ctx, error):
@@ -64,7 +69,8 @@ async def handle_missing_any_role(ctx, error):
         ctx,
         f"{ERROR}  403! Missing Roles! >:(",
         f"You don't have the required roles!\n> Roles: `{r}`",
-        WARNING
+        WARNING,
+        footer=False
     )
 
 async def handle_command_on_cooldown(ctx, error):
@@ -72,7 +78,8 @@ async def handle_command_on_cooldown(ctx, error):
         ctx,
         f"{ERROR}  429! Too Many Requests! >:(",
         f"Cooldown flagged!\n> Try again in: `{round(error.retry_after, 1)}s`",
-        WARNING
+        WARNING,
+        footer=False
     )
 
 ERROR_HANDLERS = {

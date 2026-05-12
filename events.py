@@ -1,4 +1,4 @@
-import discord, time
+import discord, time, traceback
 
 from discord.ext import commands
 from datetime import datetime, timezone
@@ -35,11 +35,15 @@ def register_events(bot):
             "Thank you for hosting!\n\n"
             "=========================================\n"
         )
+
         bot.system_logger.info("Bot Started Up")
+        psutil.cpu_percent(interval=None)
+
+        bot.tree.copy_global_to(guild=1316723730717868093)
+        await bot.tree.sync()
 
     @bot.event
     async def on_message(message):
-        # print(message.content)    NO BRO
         if message.author == bot.user:
             return
 
@@ -64,17 +68,13 @@ def register_events(bot):
             ctx,
             f"{ERROR}  500! Internal Error! >:(",
             "Something went wrong internally. The devs have been notified!",
-            WARNING
+            WARNING,
+            footer=False
         )
 
-        log_msg = (
-            f"Command: {ctx.command}, "
-            f"Requested by: {ctx.author} ({ctx.author.id}), "
-            f"Channel: {ctx.channel} ({ctx.channel.id}), "
-            f"Message: {ctx.message.content}, "
-            f"Type: {type(error).__name__}: {error}"
-        )
+        log_msg = (f"Command: {ctx.command}, Requested by: {ctx.author} ({ctx.author.id}), Channel: {ctx.channel} ({ctx.channel.id}), Message: {ctx.message.content}, Type: {type(error).__name__}: {error}")
 
         bot.system_logger.error(log_msg)
         bot.error_logger.error(log_msg)
         print(log_msg)
+        traceback.print_exception(type(error), error, error.__traceback__)

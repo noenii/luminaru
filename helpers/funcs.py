@@ -34,27 +34,20 @@ def setup_logging():
 
     return system_logger, command_logger, error_logger
 
-def embed(ctx, title=None, desc=None, icon=False, footer=False):
+def embed(ctx, title=None, desc=None, footer=True):
     e = discord.Embed(
         title=title,
         description=desc,
         color=EMBED_COLOR
     )
-    if icon:
-        if ctx.guild:
-            e.set_author(
-                name=ctx.guild.name,
-                icon_url=ctx.guild.icon.url if ctx.guild.icon else None
-            )
     if footer:
         e.set_footer(text=f"Requested by {ctx.author}")
 
     return e
 
-async def send(ctx, title=None, desc=None, emoji=SUCCESS, icon=False, footer=False):
+async def send(ctx, title=None, desc=None, emoji=SUCCESS, footer=True):
     try:
-        await ctx.reply(embed=embed(ctx, title, desc, icon, footer), mention_author=False)
-
+        await ctx.reply(embed=embed(ctx, title, desc, footer), mention_author=False)
         try:
             await ctx.message.add_reaction(emoji)
         except discord.HTTPException:
@@ -69,8 +62,8 @@ def online(guild):
 def is_staff(ctx):
     return any(r.name in STAFF for r in ctx.author.roles)
 
-def ts(t):
-    return f"<t:{int(t.timestamp())}:F>"
+def ts(t, style: str = "R") -> str:
+    return f"<t:{int(t)}:{style}>"
 
 def fmt_time(seconds: int):
     intervals = (
@@ -91,3 +84,14 @@ def fmt_time(seconds: int):
             parts.append(f"{value}{name}")
 
     return " ".join(parts) or "0s"
+
+def format_bytes(size: int) -> str:
+    units = ['b', 'kb', 'mb', 'gb']
+
+    i = 0
+
+    while size >= 1024 and i < len(units) - 1:
+        size /= 1024
+        i += 1
+
+    return f"{round(size, 2):g} {units[i]}"

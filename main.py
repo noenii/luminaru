@@ -1,10 +1,10 @@
-import asyncio, discord, time, threading
+import asyncio, discord, time, threading, os
 
 from discord.ext import commands
 
 from setup.config import TOKEN, PREFIX
 from helpers.funcs import setup_logging
-from commands import register_commands
+
 from events import register_events
 
 intents = discord.Intents.default()
@@ -21,20 +21,29 @@ bot.system_logger, bot.command_logger, bot.error_logger = setup_logging()
 def console_listener():
     while True:
         cmd = input().lower().strip()
-
-        future = asyncio.run_coroutine_threadsafe(bot.close(), bot.loop)
-        try:
-            future.result(timeout=10)
-        except Exception as e:
-            print(f"Error during shutdown: {e}")
-        bot.system_logger.info("Bot Shutdown")
-        print("\nShutdown successful.")
-        break
+        if cmd == "quit":
+            future = asyncio.run_coroutine_threadsafe(bot.close(), bot.loop)
+            try:
+                future.result(timeout=10)
+            except Exception as e:
+                print(f"Error during shutdown: {e}")
+            bot.system_logger.info("Bot Shutdown")
+            print("\nShutdown successful.")
+            break
 
 async def main():
-    register_commands(bot)      # only prefixes rn, slash cmds later
+
+    for filename in os.listdir('bot/commands'):
+        if filename.endswith('.py'):
+            try:
+                await bot.load_extension(f'commands.{filename[:-3]}')   # only prefixes rn, slash cmds later
+                bot.system_logger.info(f"Loaded extension: {filename}")
+            except Exception as e:
+                err = f"Failed to load extension: {filename} - {e}"
+                print(err)
+                bot.error_logger.error(err)
+
     register_events(bot)
-    # print(bot.commands)   SON WHY
 
     threading.Thread(target=console_listener, daemon=True).start()
 
