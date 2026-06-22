@@ -1,15 +1,19 @@
 import discord, time
 
 from discord.ext import commands
-from services.fetch import system_stats
-from helpers.funcs import embed, send, format_bytes, fmt_time, ts
+from stuff.services import system_stats
+from stuff.funcs import embed, send, format_bytes, fmt_time, ts
 from setup.config import SUCCESS, LOADING
 
-class Stats(commands.Cog):
+class system(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="ping", description="View Bot's Ping")
+    @commands.hybrid_command(
+        name = "ping",
+        description = "View Ping",
+        help = "View Ping Stats"
+    )
     async def ping(self, ctx: commands.Context):
         s = system_stats(self.bot, self.bot.start_time)
 
@@ -44,23 +48,31 @@ class Stats(commands.Cog):
             except:
                 pass
 
-        await message.edit(content=None, embed=e)
+        await message.edit(content = None, embed = e)
 
-    @commands.hybrid_command(name="sys", description="View System Stats")
-    async def sys(self, ctx: commands.Context):
+    @commands.hybrid_command(
+        name = "system",
+        description = "View System Stats",
+        help = "View System Stats"
+    )
+    async def system(self, ctx: commands.Context):
         s = system_stats(self.bot, self.bot.start_time)
         await send(
             ctx,
             "System Stats",
-            f"> CPU: `{s['cpu']}`\n"
+            f"> CPU: `{s['cpu']}%`\n"
             f"> Cores: `{s['cores']}`\n"
             f"> Threads: `{s['threads']}`\n"
             f"> RAM: `{format_bytes(s['ram'])}`\n"
             f"> RAM%: `{s['ram_pct']}%`\n"
-            f"> Disk%: `{s['disk_pct']}%`",
+            f"> DISK%: `{s['disk_pct']}%`",
         )
 
-    @commands.hybrid_command(name="env", description="View Bot Enviroment")
+    @commands.hybrid_command(
+        name = "env",
+        description = "View Bot Enviroment",
+        help = "Displays System Info when Requested"
+    )
     async def env(self, ctx: commands.Context):
         s = system_stats(self.bot, self.bot.start_time)
         await send(
@@ -73,7 +85,11 @@ class Stats(commands.Cog):
             "> Dir: `/bot`"
         )
 
-    @commands.hybrid_command(name="uptime", description="View Uptime Info")
+    @commands.hybrid_command(
+        name = "uptime",
+        description = "View Uptime",
+        help = "View Uptime Stats"
+    )
     async def uptime(self, ctx: commands.Context):
         s = system_stats(self.bot, self.bot.start_time)
         await send(
@@ -85,4 +101,4 @@ class Stats(commands.Cog):
         )
 
 async def setup(bot):
-    await bot.add_cog(Stats(bot))
+    await bot.add_cog(system(bot))

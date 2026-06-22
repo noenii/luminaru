@@ -1,10 +1,10 @@
-import discord, time, traceback
+import discord, time, traceback, psutil
 
 from discord.ext import commands
 from datetime import datetime, timezone
 
-from helpers.funcs import send
-from helpers.handlers import ERROR_HANDLERS
+from stuff.funcs import send
+from stuff.handlers import ERROR_HANDLERS
 from setup.config import ERROR, WARNING
 
 def register_events(bot):
@@ -17,30 +17,37 @@ def register_events(bot):
         bot.ready = True
 
         await bot.change_presence(
-            status=discord.Status.dnd,
+            status=discord.Status.invisible,
             activity=discord.Activity(
                 type=discord.ActivityType.watching,
                 name="/aki"
             )
         )
+
         print(
-            "=========================================\n\n"
+            "\n=========================================\n\n"
             "      _           _                 \n"
             "     | |_ _ _____|_|___ ___ ___ _ _ \n"
             "     | | | |     | |   | .'|  _| | |\n"
             "     |_|___|_|_|_|_|_|_|__,|_| |___|\n\n"
             "               a cool bot?\n\n"
             "=========================================\n\n"
-            f"Successfully logged in as {bot.user} at {datetime.fromtimestamp(time.time(), timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
-            "Thank you for hosting!\n\n"
+            f"Successfully logged in as {bot.user}\n\n"
             "=========================================\n"
         )
 
-        bot.system_logger.info("Bot Started Up")
-        psutil.cpu_percent(interval=None)
+        try:
+            synced = await bot.tree.sync()
 
-        bot.tree.copy_global_to(guild=1316723730717868093)
-        await bot.tree.sync()
+            print(f"Synced {len(synced)} commands\n")
+            bot.system_logger.info(f"Synced {len(synced)} commands.")
+
+        except Exception as e:
+            bot.error_logger.error(f"Failed to sync commands in on_ready: {e}\n")
+            print(f"Error syncing commands: {e}")
+
+        bot.system_logger.info("Bot Started Up")
+        psutil.cpu_percent(interval = None)
 
     @bot.event
     async def on_message(message):
@@ -69,7 +76,7 @@ def register_events(bot):
             f"{ERROR}  500! Internal Error! >:(",
             "Something went wrong internally. The devs have been notified!",
             WARNING,
-            footer=False
+            footer = False
         )
 
         log_msg = (f"Command: {ctx.command}, Requested by: {ctx.author} ({ctx.author.id}), Channel: {ctx.channel} ({ctx.channel.id}), Message: {ctx.message.content}, Type: {type(error).__name__}: {error}")

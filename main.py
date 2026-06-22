@@ -3,13 +3,14 @@ import asyncio, discord, time, threading, os
 from discord.ext import commands
 
 from setup.config import TOKEN, PREFIX
-from helpers.funcs import setup_logging
+from stuff.funcs import setup_logging
 
 from events import register_events
 
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
+intents.presences = True
 
 bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 
@@ -24,7 +25,7 @@ def console_listener():
         if cmd == "quit":
             future = asyncio.run_coroutine_threadsafe(bot.close(), bot.loop)
             try:
-                future.result(timeout=10)
+                future.result(timeout = 10)
             except Exception as e:
                 print(f"Error during shutdown: {e}")
             bot.system_logger.info("Bot Shutdown")
@@ -32,7 +33,6 @@ def console_listener():
             break
 
 async def main():
-
     for filename in os.listdir('bot/commands'):
         if filename.endswith('.py'):
             try:
