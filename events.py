@@ -3,7 +3,7 @@ import discord, time, traceback, psutil
 from discord.ext import commands
 from datetime import datetime, timezone
 
-from stuff.funcs import send
+from stuff.funcs import send, embed
 from stuff.handlers import ERROR_HANDLERS
 from setup.config import ERROR, WARNING
 
@@ -17,7 +17,7 @@ def register_events(bot):
         bot.ready = True
 
         await bot.change_presence(
-            status=discord.Status.invisible,
+            status=discord.Status.dnd,
             activity=discord.Activity(
                 type=discord.ActivityType.watching,
                 name="/aki"
@@ -47,6 +47,7 @@ def register_events(bot):
             print(f"Error syncing commands: {e}")
 
         bot.system_logger.info("Bot Started Up")
+
         psutil.cpu_percent(interval = None)
 
     @bot.event
@@ -60,7 +61,12 @@ def register_events(bot):
     async def on_command_completion(ctx):
         msg = f"Command: {ctx.command}, Requested by: {ctx.author}, Channel: {ctx.channel}"
         bot.command_logger.info(msg)
-        print(msg)
+
+    @bot.event
+    async def on_error(event, *args, **kwargs):
+        print(f"\nERROR")
+        print(event)
+        traceback.print_exc()
 
     @bot.event
     async def on_command_error(ctx, error):
@@ -71,13 +77,14 @@ def register_events(bot):
         if handler:
             return await handler(ctx, error)
 
-        await send(
+        e = embed(
             ctx,
             f"{ERROR}  500! Internal Error! >:(",
             "Something went wrong internally. The devs have been notified!",
-            WARNING,
-            footer = False
+            0xED4245
         )
+
+        await send(ctx, e, WARNING)
 
         log_msg = (f"Command: {ctx.command}, Requested by: {ctx.author} ({ctx.author.id}), Channel: {ctx.channel} ({ctx.channel.id}), Message: {ctx.message.content}, Type: {type(error).__name__}: {error}")
 

@@ -12,12 +12,12 @@ intents.message_content = True
 intents.members = True
 intents.presences = True
 
-bot = commands.Bot(command_prefix=PREFIX, intents=intents)
+bot = commands.Bot(command_prefix = PREFIX, intents = intents)
 
 bot.ready = False
 bot.start_time = time.time()
 
-bot.system_logger, bot.command_logger, bot.error_logger = setup_logging()
+bot.system_logger, bot.command_logger, bot.error_logger, bot.dev_logger = setup_logging()
 
 def console_listener():
     while True:
@@ -33,10 +33,10 @@ def console_listener():
             break
 
 async def main():
-    for filename in os.listdir('bot/commands'):
-        if filename.endswith('.py'):
+    for filename in os.listdir("luminaru/commands"):
+        if filename.endswith(".py") and not filename.startswith("_"):
             try:
-                await bot.load_extension(f'commands.{filename[:-3]}')   # only prefixes rn, slash cmds later
+                await bot.load_extension(f"commands.{filename[:-3]}")
                 bot.system_logger.info(f"Loaded extension: {filename}")
             except Exception as e:
                 err = f"Failed to load extension: {filename} - {e}"
@@ -45,7 +45,7 @@ async def main():
 
     register_events(bot)
 
-    threading.Thread(target=console_listener, daemon=True).start()
+    threading.Thread(target = console_listener, daemon = True).start()
 
     async with bot:
         await bot.start(TOKEN)

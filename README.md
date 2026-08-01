@@ -9,3 +9,5 @@ version history
 0.2.0: added sys stats, env info, uptime cmds. ping cmd was buffed. system info service added. a few helper funcs added. some minor changes throughout the bot
 
 0.3.0: added a few member info commands, fixed a few minor bugs
+
+0.3.1: building a dev cog, streamlined some code, moving away from services, member cog is down temporarily and a bunch of minor changes throughout

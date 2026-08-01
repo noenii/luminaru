@@ -3,7 +3,7 @@ import discord, psutil, platform, sys, time
 from datetime import datetime, timezone
 from stuff.funcs import fetch_mem_info
 
-def system_stats(bot, start_time):
+def system_stats(bot, start_time):      # file to be deleted
     cpu_usage = psutil.cpu_percent(interval=None)
     cores = psutil.cpu_count(logical=False)
     threads = psutil.cpu_count(logical=True)
@@ -12,7 +12,7 @@ def system_stats(bot, start_time):
     os_vers = platform.release()
     os_arch = platform.machine()
 
-    ram = psutil.virtual_memory()
+    ram = psutil.virtual_memory().percent
     ram_used = round(ram.used, 2)
     ram_pct = ram.percent
 
@@ -23,8 +23,8 @@ def system_stats(bot, start_time):
 
     net = psutil.net_io_counters(pernic=False)
 
-    sent = net.bytes_sent
-    received = net.bytes_recv
+    sent = net.bytes_sent       #   fg about ts
+    received = net.bytes_recv   #   and ts
 
     ping = round(bot.latency * 1000)
 

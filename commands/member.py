@@ -2,14 +2,14 @@ import discord, time, asyncio
 
 from discord.ext import commands
 from datetime import datetime, timedelta, timezone
-from stuff.services import member_info
-from stuff.funcs import embed, send, fmt_time, ts
+from stuff.funcs import container, send, fmt_time, ts, fetch_mem_info
 from setup.config import SUCCESS, LOADING
 
-class member(commands.Cog):
+class Member(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
+    '''
+    broken asl rn ignore
     @commands.hybrid_command(
         name = "member",
         description = "View Someone's Info",
@@ -17,26 +17,14 @@ class member(commands.Cog):
     )
     async def member(self, ctx: commands.Context, member: discord.Member = None):
         member = member or ctx.author
-        m = member_info(ctx, member)
 
-        e = embed(
-            ctx,
-            "Member Info",
-            f"> Name: `{m['name']}`\n"
-            f"> User: `{m['username']}`\n"
-            f"> Type: `{m['type']}`"
-        )
-        e.set_thumbnail(url = m['avatar'])
+        badges, status, activity = fetch_mem_info(ctx, member)
 
-        try:
-            await ctx.reply(embed = e, mention_author = False)
-            try:
-                await ctx.message.add_reaction(SUCCESS)
-            except discord.HTTPException:
-                pass
+        ctx,
+        f"> Name: `{member.global_name or member.display_name}`\n"
+        f"> User: `{member.name}`\n"
+        f"> Type: `{badges}`"
 
-        except Exception as e:
-            print("SEND ERROR:", type(e).__name__, e)
 
     @commands.hybrid_command(
         name = "avatar",
@@ -45,20 +33,6 @@ class member(commands.Cog):
     )
     async def avatar(self, ctx: commands.Context,  member: discord.Member = None):
         member = member or ctx.author
-        m = member_info(ctx, member)
-
-        e = embed(ctx, f"Member Avatar")
-        e.set_image(url = m['avatar'])
-
-        try:
-            await ctx.reply(embed = e, mention_author = False)
-            try:
-                await ctx.message.add_reaction(SUCCESS)
-            except discord.HTTPException:
-                pass
-
-        except Exception as e:
-            print("SEND ERROR:", type(e).__name__, e)
 
     @commands.hybrid_command(
         name = "id",
@@ -67,12 +41,10 @@ class member(commands.Cog):
     )
     async def id(self, ctx: commands.Context,  member: discord.Member = None):
         member = member or ctx.author
-        m = member_info(ctx, member)
 
         await send(
             ctx,
-            "Member ID",
-            f"> ID: `{m['id']}`"
+            f"> ID: `{member.id}`"
         )
 
     @commands.hybrid_command(
@@ -82,13 +54,11 @@ class member(commands.Cog):
     )
     async def history(self, ctx: commands.Context,  member: discord.Member = None):
         member = member or ctx.author
-        m = member_info(ctx, member)
 
         await send(
             ctx,
-            "Member History",
-            f"> Joined: {ts(int(m['joined'].timestamp()), 'R')}\n"
-            f"> Created: {ts(int(m['created'].timestamp()), 'R')}\n"
+            f"> Joined: {ts(int(member.joined_at.timestamp()), 'R')}\n"
+            f"> Created: {ts(int(member.created_at.timestamp()), 'R')}\n"
         )
 
     @commands.hybrid_command(
@@ -98,13 +68,13 @@ class member(commands.Cog):
     )
     async def status(self, ctx: commands.Context,  member: discord.Member = None):
         member = member or ctx.author
-        m = member_info(ctx, member)
+
+        badges, status, activity = fetch_mem_info(ctx, member)
 
         await send(
             ctx,
-            "`Member Status",
-            f"{m['status']}\n"
-            f"{m['activity']}"
+            f"{status}\n"
+            f"{activity}"
         )
 
     @commands.hybrid_command(
@@ -112,16 +82,16 @@ class member(commands.Cog):
         description = "View Booster Stats",
         help = "View Member's Boosting Stats"
     )
-    async def status(self, ctx: commands.Context,  member: discord.Member = None):
+    async def boost(self, ctx: commands.Context,  member: discord.Member = None):
         member = member or ctx.author
-        m = member_info(ctx, member)
+
         boosting = "> Boosting: `False`"
-        if m['boost']:
-            boosting = f"> Boosting: `True`\n> Since: {ts(int(m['boost_d'].timestamp()), 'R')}"
+
+        if member.premium_since is not None:
+            boosting = f"> Boosting: `True`\n> Since: {ts(int(member.premium_since.timestamp()), 'R')}"
 
         await send(
             ctx,
-            "Boosting Stats",
             f"{boosting}"
         )
 
@@ -132,12 +102,15 @@ class member(commands.Cog):
     )
     async def roles(self, ctx: commands.Context,  member: discord.Member = None):
         member = member or ctx.author
-        m = member_info(ctx, member)
+
+        f_roles = [r for r in member.roles if not r.is_default()]
+        f_roles.sort(key = lambda x: x.position, reverse = True)
+
+        roles = " ".join([r.mention for r in f_roles]) or "`None`"
 
         await send(
             ctx,
-            "Member Roles",
-            f"{m['roles']}"
+            f"{roles}"
         )
 
     @commands.hybrid_command(
@@ -147,13 +120,20 @@ class member(commands.Cog):
     )
     async def perms(self, ctx: commands.Context,  member: discord.Member = None):
         member = member or ctx.author
-        m = member_info(ctx, member)
+
+        if member.guild_permissions.administrator:
+            perms = "`Administrator`"
+        else:
+            perms = [p[0] for p in member.guild_permissions if p[1]]
+            perms = ", ".join(
+                p.replace('_', ' ').title() for p in perms
+            ) or "None"
 
         await send(
             ctx,
-            "Member Perms",
-            f"`{m['perms']}`"
+            f"{perms}"
         )
+        '''
 
 async def setup(bot):
-    await bot.add_cog(member(bot))
+    await bot.add_cog(Member(bot))

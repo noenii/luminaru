@@ -1,6 +1,7 @@
 import discord, logging, os, time
 
 from datetime import datetime, timezone
+from discord.ui import LayoutView
 
 from setup.config import EMBED_COLOR, SUCCESS, DEV, IMP_ROLES
 
@@ -13,7 +14,7 @@ def setup_logging():
 
     os.makedirs(log_dir, exist_ok=True)
 
-    fmt = logging.Formatter("%(levelname)s - %(message)s - %(asctime)s")
+    fmt = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
 
     def build_logger(name, filename, level):
         logger = logging.getLogger(name)
@@ -31,27 +32,46 @@ def setup_logging():
     system_logger = build_logger("system", "system.log", logging.INFO)
     command_logger = build_logger("commands", "commands.log", logging.INFO)
     error_logger = build_logger("errors", "errors.log", logging.ERROR)
+    dev_logger = build_logger("dev", "dev.log", logging.INFO)
 
-    return system_logger, command_logger, error_logger
+    return system_logger, command_logger, error_logger, dev_logger
 
-def embed(ctx, title = None, desc = None, footer = True):
+def embed(ctx, title = None, desc = None, c = EMBED_COLOR):      # to delete
     e = discord.Embed(
         title = title,
-        description=desc,
-        color=EMBED_COLOR
+        description = desc,
+        color = c
     )
-    if footer:
-        e.set_footer(text=f"Requested by {ctx.author}")
 
     return e
 
-async def send(ctx, title = None, desc = None, emoji = SUCCESS, footer = True):
+def container(text: str) -> discord.ui.LayoutView:
+    view = discord.ui.LayoutView()
+
+    view.add_item(
+        discord.ui.Container(
+            discord.ui.TextDisplay(text)
+        )
+    )
+
+    return view
+
+async def send(ctx, i = None, emoji = SUCCESS, t = True):
     try:
-        await ctx.reply(embed = embed(ctx, title, desc, footer), mention_author = False)
-        try:
-            await ctx.message.add_reaction(emoji)
-        except discord.HTTPException:
-            pass
+        if isinstance(i, discord.Embed):
+            await ctx.reply(embed = i, mention_author = False)
+
+        elif isinstance(i, discord.ui.View):
+            await ctx.reply(view = i, mention_author = False)
+
+        elif isinstance(i, str):
+            await ctx.reply(i, mention_author = False)
+
+        if ctx.message:
+            try:
+                await ctx.message.add_reaction(emoji)
+            except (discord.HTTPException, discord.Forbidden):
+                pass
 
     except Exception as e:
         print("SEND ERROR:", type(e).__name__, e)
@@ -85,7 +105,11 @@ def fmt_time(seconds: int):
 
     return " ".join(parts) or "0s"
 
-def format_bytes(size: int) -> str:
+def fmt_date(timestamp: float) -> str:
+    dt = datetime.fromtimestamp(timestamp, tz = timezone.utc)
+    return dt.strftime("%Y-%m-%d %H:%M:%S UTC")
+
+def fmt_bytes(size: int) -> str:
     units = ['b', 'kb', 'mb', 'gb']
 
     i = 0
