@@ -8,6 +8,7 @@ from setup.config import SUCCESS, LOADING
 class Member(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
     '''
     broken asl rn ignore
     @commands.hybrid_command(

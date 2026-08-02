@@ -11,3 +11,5 @@ version history
 0.3.0: added a few member info commands, fixed a few minor bugs
 
 0.3.1: building a dev cog, streamlined some code, moving away from services, member cog is down temporarily and a bunch of minor changes throughout
+
+0.4.0: finished the dev module, added new dev log, some logging syntax changes

@@ -12,9 +12,9 @@ def setup_logging():
 
     log_dir = os.path.join(project_root, "logs")
 
-    os.makedirs(log_dir, exist_ok=True)
+    os.makedirs(log_dir, exist_ok = True)
 
-    fmt = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
+    fmt = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 
     def build_logger(name, filename, level):
         logger = logging.getLogger(name)
@@ -56,7 +56,7 @@ def container(text: str) -> discord.ui.LayoutView:
 
     return view
 
-async def send(ctx, i = None, emoji = SUCCESS, t = True):
+async def send(ctx, i = None, emoji = SUCCESS):
     try:
         if isinstance(i, discord.Embed):
             await ctx.reply(embed = i, mention_author = False)
