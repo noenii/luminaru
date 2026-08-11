@@ -1,9 +1,10 @@
 import asyncio, os, sys, traceback
 
+from pathlib import Path
 from discord.ext import commands
 
 from stuff.funcs import embed, send
-from setup.config import SUCCESS, WARNING
+from setup.config import SUCCESS, WARNING, ROOT
 
 class Dev(commands.Cog):
     def __init__(self, bot):
@@ -26,7 +27,7 @@ class Dev(commands.Cog):
     async def restart(self, ctx):
         await send(ctx, "-# restarting... gimme a sec")
         self.log_command(ctx)
-        print("Restarting...")
+        print("restarting...")
         os.execv(sys.executable, [sys.executable] + sys.argv)
 
     @commands.hybrid_command()
@@ -65,18 +66,18 @@ class Dev(commands.Cog):
         ok = []
         failed = []
 
-        for file in os.listdir("luminaru/commands"):
-            if not file.endswith(".py") or file.startswith("_"):
+        for file in (ROOT/"commands").glob("*.py"):
+            if file.stem.startswith("_"):
                 continue
 
-            ext = f"commands.{file[:-3]}"
+            ext = f"commands.{file.stem}"
 
             try:
                 await self.bot.reload_extension(ext)
-                ok.append(file[:-3])
+                ok.append(file.stem)
             except Exception as e:
-                failed.append(f"{file[:-3]}")
-                await self.extension_error(ctx, file[:-3], "reload", e)
+                failed.append(file.stem)
+                await self.extension_error(ctx, file.stem, "reload", e)
 
         msg = ""
         emoji = SUCCESS
@@ -128,7 +129,7 @@ class Dev(commands.Cog):
     async def logs(self, ctx, log: str, lines: commands.Range[int, 1, 500] = 50):
         logs = {
             p.stem: p
-            for p in Path("luminaru/logs").glob("*.log")
+            for p in (ROOT/"logs").glob("*.log")
         }
 
         path = logs.get(log.lower())
@@ -139,7 +140,7 @@ class Dev(commands.Cog):
             return await send(ctx, "-# available logs: `system`, `commands`, `errors`, `dev`", WARNING)
 
         try:
-            with open(path, "r", encoding  = "utf-8") as f:
+            with path.open("r", encoding = "utf-8") as f:
                 text = "".join(f.readlines()[-lines:])
 
             if not text:

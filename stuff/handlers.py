@@ -6,9 +6,7 @@ from setup.config import ERROR, WARNING
 
 async def handle_command_not_found(ctx, error):
     c = [cmd.name for cmd in ctx.bot.commands]
-
     m = difflib.get_close_matches(ctx.invoked_with, c, n = 3, cutoff = 0.7)
-
     s = ("\n".join(f"`{i}`" for i in m) if m else "No similar commands found.")
 
     e = embed(

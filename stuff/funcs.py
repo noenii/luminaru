@@ -3,14 +3,14 @@ import discord, logging, os, time
 from datetime import datetime, timezone
 from discord.ui import LayoutView
 
-from setup.config import EMBED_COLOR, SUCCESS, DEV, IMP_ROLES
+from setup.config import ROOT, EMBED_COLOR, SUCCESS, DEV, IMP_ROLES
 
 def setup_logging():
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
     project_root = os.path.abspath(os.path.join(script_dir, ".."))
 
-    log_dir = os.path.join(project_root, "logs")
+    log_dir = ROOT/"logs"
 
     os.makedirs(log_dir, exist_ok = True)
 
@@ -36,7 +36,7 @@ def setup_logging():
 
     return system_logger, command_logger, error_logger, dev_logger
 
-def embed(ctx, title = None, desc = None, c = EMBED_COLOR):      # to delete
+def embed(ctx, title = None, desc = None, c = EMBED_COLOR):
     e = discord.Embed(
         title = title,
         description = desc,
@@ -45,7 +45,7 @@ def embed(ctx, title = None, desc = None, c = EMBED_COLOR):      # to delete
 
     return e
 
-def container(text: str) -> discord.ui.LayoutView:
+def container(text: str):
     view = discord.ui.LayoutView()
 
     view.add_item(
@@ -82,7 +82,7 @@ def online(guild):
 def is_dev(ctx):
     return any(r.name in DEV for r in ctx.author.roles)
 
-def ts(t, style: str = "R") -> str:
+def ts(t, style: str = "R"):
     return f"<t:{int(t)}:{style}>"
 
 def fmt_time(seconds: int):
@@ -105,11 +105,11 @@ def fmt_time(seconds: int):
 
     return " ".join(parts) or "0s"
 
-def fmt_date(timestamp: float) -> str:
+def fmt_date(timestamp: float):
     dt = datetime.fromtimestamp(timestamp, tz = timezone.utc)
     return dt.strftime("%Y-%m-%d %H:%M:%S UTC")
 
-def fmt_bytes(size: int) -> str:
+def fmt_bytes(size: int):
     units = ['b', 'kb', 'mb', 'gb']
 
     i = 0
@@ -120,7 +120,7 @@ def fmt_bytes(size: int) -> str:
 
     return f"{round(size, 2):g} {units[i]}"
 
-def fetch_mem_info(ctx, member: discord.Member) -> tuple[str, str, str]:
+def fetch_badges(ctx, member: discord.Member):      # pending deletion
     member = member or ctx.author
     badges = []
 
@@ -147,45 +147,96 @@ def fetch_mem_info(ctx, member: discord.Member) -> tuple[str, str, str]:
 
     badge_text = ", ".join(badges)
 
-    status_map = {
-        discord.Status.online: "`Online`",
-        discord.Status.idle: "`Idle`",
-        discord.Status.dnd: "`DND`",
-        discord.Status.offline: "`Offline`",
-    }
-    status = status_map.get(member.status, "`N/A`")
+    return badge_text
 
-    if not member.activities:
-        return badge_text, status, "> Activity: `N/A.`"
+def fetch_status(ctx, member: discord.Member = None):
+    member = member or ctx.author
+
+    status_map = {
+        discord.Status.online: "online",
+        discord.Status.idle: "idle",
+        discord.Status.dnd: "dnd",
+        discord.Status.offline: "offline",
+    }
+
+    status = status_map.get(member.status, "offline")
+
+    stat = ""
+    custom_act = discord.utils.get(
+        member.activities, type=discord.ActivityType.custom
+    )
+
+    if custom_act:
+        status_text = custom_act.state or ""
+        emoji_text = f"{custom_act.emoji} " if custom_act.emoji else ""
+
+        if status_text or emoji_text:
+            stat = f"{emoji_text}**{status_text}**"
 
     lines = []
     for act in member.activities:
+        if isinstance(act, discord.CustomActivity):
+            continue
+
         if isinstance(act, discord.Game):
-            lines.append(f"> Playing `{act.name}`")
+            lines.append(f"-# playing **{act.name}**")
 
         elif isinstance(act, discord.Streaming):
-            lines.append(f"> Streaming `{act.name}` ({act.platform})")
+            lines.append(f"-# streaming **{act.name}** ({act.platform})")
 
         elif isinstance(act, discord.Spotify):
-            lines.append(f"> Listening to `{act.title}` by `{act.artist}`")
-
-        elif isinstance(act, discord.CustomActivity):
-            status_text = act.name if act.name else ""
-            emoji_text = f"{act.emoji} " if act.emoji else ""
-            if status_text or emoji_text:
-                status = f"> {emoji_text}`{status_text}`\n> Status: " + status
+            lines.append(f"-# listening to **{act.title}** by **{act.artist}**")
 
         elif isinstance(act, discord.Activity):
             if act.type == discord.ActivityType.watching:
-                lines.append(f"> Watching `{act.name}`")
+                lines.append(f"-# watching **{act.name}**")
             elif act.type == discord.ActivityType.listening:
-                lines.append(f"> Listening to `{act.name}`")
+                lines.append(f"-# listening to **{act.name}**")
             elif act.type == discord.ActivityType.playing:
-                lines.append(f"> Playing `{act.name}`")
+                lines.append(f"-# playing **{act.name}**")
+            elif act.type == discord.ActivityType.competing:
+                lines.append(f"-# competing in **{act.name}**")
             else:
-                lines.append(f"> {act.type.name.title()} `{act.name}`")
-        else:
-            lines.append(f"> {str(act)}")
+                lines.append(f"-# {act.type.name.title()} **{act.name}**")
 
-    activity = "\n".join(lines) if lines else "> Activity: `N/A`"
-    return badge_text, status, activity
+    s = f"-# {stat}, **{status}**" if stat else f"-# **{status}**"
+    a = "\n".join(lines) if lines else ""
+
+    return s, a
+
+async def joinpos(ctx, member: discord.Member):
+    guild = ctx.guild
+    if not guild:
+        return 0
+
+    if not guild.chunked:
+        await guild.chunk()
+
+    sorted_members = sorted(
+        [m for m in guild.members if m.joined_at is not None],
+        key = lambda m: m.joined_at
+    )
+
+    try:
+        return sorted_members.index(member) + 1
+    except ValueError:
+        return 0
+
+def list_roles(ctx, member: discord.Member = None):
+    member = member or ctx.author
+    f_roles = [r for r in member.roles if not r.is_default()]
+    f_roles.sort(key = lambda x: x.position, reverse = True)
+
+    roles = " ".join([r.mention for r in f_roles]) or ""
+
+    return roles
+
+def list_perms(member: discord.Member):
+    if member.guild_permissions.administrator:
+        return ["Administrator"]
+
+    return [
+        perm.replace("_", " ").title()
+        for perm, value in member.guild_permissions
+        if value
+    ]

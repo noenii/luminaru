@@ -1,18 +1,15 @@
 import os
 from dotenv import load_dotenv
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
 
 load_dotenv()
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 PREFIX = "."
 
-E_C_1 = 0xf2e9e4
-E_C_2 = 0xc9ada7
-E_C_3 = 0x9a8c98
-E_C_4 = 0x4a4e69
-E_C_5 = 0x22223b
-
-EMBED_COLOR = 16566995
+EMBED_COLOR = 0x242429
 # 0x242429
 # 16566995
 # 0x36393F is embed color i think

@@ -32,15 +32,15 @@ class System(commands.Cog):
             except Exception:
                 pass
 
-        await send(ctx, f"-# WS: **{ws} ms**, API : **{api} ms**")
+        await send(ctx, f"-# ws: **{ws} ms**, api: **{api} ms**")
 
     @commands.hybrid_command()
     async def sys(self, ctx: commands.Context):
-        await send(ctx, f"-# CPU: **{psutil.cpu_percent(interval = 0.1):.1f}%**, RAM%: **{psutil.virtual_memory().percent}%**")
+        await send(ctx, f"-# cpu: **{psutil.cpu_percent(interval = 0.1):.1f}%**, ram: **{psutil.virtual_memory().percent}%**")
 
     @commands.hybrid_command()
     async def env(self, ctx: commands.Context):
-        await send(ctx, f"-# Python: **{platform.python_version()}**, Discord: **{discord.__version__}**, OS: **{platform.system()} {platform.release()} {platform.machine()}**\n")
+        await send(ctx, f"-# py: **{platform.python_version()}**, dc: **{discord.__version__}**, os: **{platform.system()} {platform.release()} {platform.machine()}**\n")
 
     @commands.hybrid_command()
     async def uptime(self, ctx: commands.Context):

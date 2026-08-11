@@ -13,3 +13,5 @@ version history
 0.3.1: building a dev cog, streamlined some code, moving away from services, member cog is down temporarily and a bunch of minor changes throughout
 
 0.4.0: finished the dev module, added new dev log, some logging syntax changes
+
+0.5.0: the member module, added pagination, some bug fixes ig

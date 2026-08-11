@@ -2,7 +2,7 @@ import asyncio, discord, time, threading, os
 
 from discord.ext import commands
 
-from setup.config import TOKEN, PREFIX
+from setup.config import TOKEN, PREFIX, ROOT
 from stuff.funcs import setup_logging
 
 from events import register_events
@@ -33,7 +33,7 @@ def console_listener():
             break
 
 async def main():
-    for filename in os.listdir("luminaru/commands"):
+    for filename in os.listdir(f"{ROOT}/commands"):
         if filename.endswith(".py") and not filename.startswith("_"):
             try:
                 await bot.load_extension(f"commands.{filename[:-3]}")
