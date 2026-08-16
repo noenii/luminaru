@@ -4,10 +4,10 @@ from math import ceil
 
 from stuff.funcs import embed
 
-class PageModal(discord.ui.Modal, title = "go to Page"):
+class PageModal(discord.ui.Modal, title = "Go to Page"):
     page = discord.ui.TextInput(
-        label = "page Number",
-        placeholder = "enter a page number..."
+        label = "Page Number",
+        placeholder = "Enter a page number..."
     )
 
     def __init__(self, view):
@@ -19,7 +19,7 @@ class PageModal(discord.ui.Modal, title = "go to Page"):
             page = int(self.page.value)
         except ValueError:
             return await interaction.response.send_message(
-                "invalid page",
+                "Invalid Page",
                 ephemeral = True
             )
 
@@ -39,7 +39,7 @@ class PageModal(discord.ui.Modal, title = "go to Page"):
 
 
 class Paginator(discord.ui.View):
-    def __init__(self, pages, author, *, timeout=120, buttons=("first", "prev", "page", "next", "last")):
+    def __init__(self, pages, author, *, timeout = 120, buttons = ("first", "prev", "page", "next", "last")):
         super().__init__(timeout=timeout)
 
         self.pages = pages

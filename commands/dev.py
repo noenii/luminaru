@@ -1,4 +1,4 @@
-import asyncio, os, sys
+import asyncio, os, sys, traceback
 
 from discord.ext import commands
 
