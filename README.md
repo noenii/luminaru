@@ -15,3 +15,5 @@ version history
 0.4.0: finished the dev module, added new dev log, some logging syntax changes
 
 0.5.0: the member module, added pagination, some bug fixes ig
+
+0.5.1: server, channels and more to be added ig. role module being made, some minor bug fixes and changes throughout

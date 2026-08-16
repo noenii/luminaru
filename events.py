@@ -1,11 +1,7 @@
-import discord, time, traceback, psutil
-
-from discord.ext import commands
-from datetime import datetime, timezone
+import discord, traceback, psutil
 
 from stuff.funcs import send, embed
 from stuff.handlers import ERROR_HANDLERS
-from setup.config import ERROR, WARNING
 
 def register_events(bot):
 
@@ -17,10 +13,10 @@ def register_events(bot):
         bot.ready = True
 
         await bot.change_presence(
-            status=discord.Status.dnd,
-            activity=discord.Activity(
-                type=discord.ActivityType.watching,
-                name="/aki"
+            status = discord.Status.dnd,
+            activity = discord.Activity(
+                type = discord.ActivityType.watching,
+                name = "/aki"
             )
         )
 
@@ -59,8 +55,7 @@ def register_events(bot):
 
     @bot.event
     async def on_command_completion(ctx):
-        msg = f"Command: {ctx.command}, Requested by: {ctx.author}, Channel: {ctx.channel}"
-        bot.command_logger.info(msg)
+        bot.command_logger.info(f"Command: {ctx.command}, Requested by: {ctx.author}, Channel: {ctx.channel}")
 
     @bot.event
     async def on_error(event, *args, **kwargs):
@@ -79,12 +74,12 @@ def register_events(bot):
 
         e = embed(
             ctx,
-            f"{ERROR}  500! Internal Error! >:(",
+            f"500! Internal Error! >:(",
             "Something went wrong internally. The devs have been notified!",
             0xED4245
         )
 
-        await send(ctx, e, WARNING)
+        await send(ctx, e)
 
         log_msg = (f"Command: {ctx.command}, Requested by: {ctx.author} ({ctx.author.id}), Channel: {ctx.channel} ({ctx.channel.id}), Message: {ctx.message.content}, Type: {type(error).__name__}: {error}")
 

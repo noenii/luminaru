@@ -2,7 +2,6 @@ import difflib
 from discord.ext import commands
 
 from stuff.funcs import send, embed
-from setup.config import ERROR, WARNING
 
 async def handle_command_not_found(ctx, error):
     c = [cmd.name for cmd in ctx.bot.commands]
@@ -11,80 +10,80 @@ async def handle_command_not_found(ctx, error):
 
     e = embed(
         ctx,
-        f"{ERROR}  404: Command Not Found",
+        f"404: Command Not Found",
         f"The command does not exist or was typed incorrectly.\n> Closest Command/s: {s}",
         0xED4245
     )
 
-    return await send(ctx, e, WARNING)
+    return await send(ctx, e)
 
 async def handle_missing_required_argument(ctx, error):
     u = (f"{ctx.prefix}{ctx.command.qualified_name} {' '.join(f'<{p}>' for p in ctx.command.clean_params)}")
 
     e = embed(
         ctx,
-        f"{ERROR}  400: Missing Required Argument(s)",
+        f"400: Missing Required Argument(s)",
         f"Missing Required Argument/s.\n> Correct Usage: `{u}`",
         0xED4245
     )
 
-    return await send(ctx, e, WARNING)
+    return await send(ctx, e)
 
 async def handle_bad_argument(ctx, error):
     u = (f"{ctx.prefix}{ctx.command.qualified_name} {' '.join(f'<{p}>' for p in ctx.command.clean_params)}")
 
     e = embed(
         ctx,
-        f"{ERROR}  400: Invalid Arg/Args",
+        f"400: Invalid Arg/Args",
         f"Invalid Argument/s.\n> Details: `{error}`\n> Usage: `{u}`",
         0xED4245
     )
 
-    return await send(ctx, e, WARNING)
+    return await send(ctx, e)
 
 async def handle_missing_permissions(ctx, error):
     p = ", ".join(p.replace("_", " ").title() for p in error.missing_permissions)
 
     e = embed(
         ctx,
-        f"{ERROR}  403: You can't use this command",
+        f"403: You can't use this command",
         f"You are missing permissions to use this command.\n> Permission/s: `{p}`",
         0xED4245
     )
 
-    return await send(ctx, e, WARNING)
+    return await send(ctx, e)
 
 async def handle_missing_role(ctx, error):
     e = embed(
         ctx,
-        f"{ERROR}  403: Missing Role",
+        f"403: Missing Role",
         f"You don't have a required role.\n> Role: `{error.missing_role}`",
         0xED4245
     )
 
-    return await send(ctx, e, WARNING)
+    return await send(ctx, e)
 
 async def handle_missing_any_role(ctx, error):
     r = ", ".join(error.missing_roles)
 
     e = embed(
         ctx,
-        f"{ERROR}  403: Missing Roles",
+        f"403: Missing Roles",
         f"You don't have the required roles.\n> Roles: `{r}`",
         0xED4245
     )
 
-    return await send(ctx, e, WARNING)
+    return await send(ctx, e)
 
 async def handle_command_on_cooldown(ctx, error):
     e = embed(
         ctx,
-        f"{ERROR}  429: Too Many Requests",
+        f"429: Too Many Requests",
         f"Cooldown flagged.\n> Try again in: `{round(error.retry_after, 1)}s`",
         0xED4245
     )
 
-    return await send(ctx, e, WARNING)
+    return await send(ctx, e)
 
 ERROR_HANDLERS = {
     commands.CommandNotFound: handle_command_not_found,

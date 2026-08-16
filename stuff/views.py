@@ -4,7 +4,6 @@ from math import ceil
 
 from stuff.funcs import embed
 
-
 class PageModal(discord.ui.Modal, title = "go to Page"):
     page = discord.ui.TextInput(
         label = "page Number",
@@ -140,8 +139,8 @@ async def send_pages(ctx, pages, *, timeout = 120, buttons = ("first", "prev", "
     )
 
     msg = await ctx.send(
-        embed=pages[0],
-        view=view
+        embed = pages[0],
+        view = view
     )
 
     view.message = msg

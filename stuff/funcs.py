@@ -1,9 +1,9 @@
-import discord, logging, os, time
+import discord, logging, os
 
 from datetime import datetime, timezone
 from discord.ui import LayoutView
 
-from setup.config import ROOT, EMBED_COLOR, SUCCESS, DEV, IMP_ROLES
+from setup.config import ROOT, EMBED_COLOR
 
 def setup_logging():
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -56,31 +56,19 @@ def container(text: str):
 
     return view
 
-async def send(ctx, i = None, emoji = SUCCESS):
+async def send(ctx, i = None):
     try:
         if isinstance(i, discord.Embed):
-            await ctx.reply(embed = i, mention_author = False)
+            await ctx.send(embed = i)
 
         elif isinstance(i, discord.ui.View):
-            await ctx.reply(view = i, mention_author = False)
+            await ctx.send(view = i)
 
         elif isinstance(i, str):
-            await ctx.reply(i, mention_author = False)
-
-        if ctx.message:
-            try:
-                await ctx.message.add_reaction(emoji)
-            except (discord.HTTPException, discord.Forbidden):
-                pass
+            await ctx.send(i)
 
     except Exception as e:
         print("SEND ERROR:", type(e).__name__, e)
-
-def online(guild):
-    return sum(m.status != discord.Status.offline for m in guild.members)
-
-def is_dev(ctx):
-    return any(r.name in DEV for r in ctx.author.roles)
 
 def ts(t, style: str = "R"):
     return f"<t:{int(t)}:{style}>"
@@ -104,50 +92,6 @@ def fmt_time(seconds: int):
             parts.append(f"{value}{name}")
 
     return " ".join(parts) or "0s"
-
-def fmt_date(timestamp: float):
-    dt = datetime.fromtimestamp(timestamp, tz = timezone.utc)
-    return dt.strftime("%Y-%m-%d %H:%M:%S UTC")
-
-def fmt_bytes(size: int):
-    units = ['b', 'kb', 'mb', 'gb']
-
-    i = 0
-
-    while size >= 1024 and i < len(units) - 1:
-        size /= 1024
-        i += 1
-
-    return f"{round(size, 2):g} {units[i]}"
-
-def fetch_badges(ctx, member: discord.Member):      # pending deletion
-    member = member or ctx.author
-    badges = []
-
-    member_role_ids = {role.id for role in member.roles}
-
-    role_badge_mapping = {
-        "owner": "Owner", "dev": "Dev", "admin": "Admin",
-        "mod": "Mod", "pm": "PM", "im": "IM",
-        "staff": "Staff", "botp": "Bot+",
-        "vip": "VIP", "og": "OG", "pooks": "Pookie"
-    }
-
-    for key, badge_name in role_badge_mapping.items():
-        role_id = IMP_ROLES.get(key)
-        if role_id and role_id in member_role_ids:
-            badges.append(badge_name)
-
-    if member.premium_since:
-        badges.append("Booster")
-    if member.bot:
-        badges.append("Bot")
-    if not badges:
-        badges.append("Member")
-
-    badge_text = ", ".join(badges)
-
-    return badge_text
 
 def fetch_status(ctx, member: discord.Member = None):
     member = member or ctx.author
@@ -233,10 +177,26 @@ def list_roles(ctx, member: discord.Member = None):
 
 def list_perms(member: discord.Member):
     if member.guild_permissions.administrator:
-        return ["Administrator"]
+        return ["administrator"]
 
     return [
         perm.replace("_", " ").title()
         for perm, value in member.guild_permissions
         if value
     ]
+
+def perm_check(role: discord.Role):
+    p = (
+        'administrator',
+        'manage_guild',
+        'manage_roles',
+        'manage_channels',
+        'manage_webhooks',
+        'manage_expressions',
+        'kick_members',
+        'ban_members',
+        'mention_everyone',
+        'moderate_members',
+    )
+
+    return any(getattr(role.permissions, flag, False) for flag in p)

@@ -1,8 +1,8 @@
 import discord, time, psutil, platform
 
 from discord.ext import commands
+
 from stuff.funcs import send, fmt_time
-from setup.config import SUCCESS, LOADING
 
 class System(commands.Cog):
     def __init__(self, bot):
@@ -16,7 +16,7 @@ class System(commands.Cog):
             await ctx.defer()
         elif ctx.message:
             try:
-                await ctx.message.add_reaction(LOADING)
+                await ctx.message.add_reaction("⭕")
             except Exception:
                 pass
 
@@ -27,20 +27,19 @@ class System(commands.Cog):
 
         if ctx.message:
             try:
-                emoji = discord.PartialEmoji.from_str(LOADING)
-                await ctx.message.remove_reaction(emoji, self.bot.user)
+                await ctx.message.remove_reaction("⭕", self.bot.user)
             except Exception:
                 pass
 
-        await send(ctx, f"-# ws: **{ws} ms**, api: **{api} ms**")
+        await send(ctx, f"-# WS: **{ws} ms**, API: **{api} ms**")
 
     @commands.hybrid_command()
     async def sys(self, ctx: commands.Context):
-        await send(ctx, f"-# cpu: **{psutil.cpu_percent(interval = 0.1):.1f}%**, ram: **{psutil.virtual_memory().percent}%**")
+        await send(ctx, f"-# CPU: **{psutil.cpu_percent(interval = 0.1):.1f}%**, RAM: **{psutil.virtual_memory().percent}%**")
 
     @commands.hybrid_command()
     async def env(self, ctx: commands.Context):
-        await send(ctx, f"-# py: **{platform.python_version()}**, dc: **{discord.__version__}**, os: **{platform.system()} {platform.release()} {platform.machine()}**\n")
+        await send(ctx, f"-# Python: **{platform.python_version()}**, Discord.py: **{discord.__version__}**, OS: **{platform.system()} {platform.release()} {platform.machine()}**\n")
 
     @commands.hybrid_command()
     async def uptime(self, ctx: commands.Context):

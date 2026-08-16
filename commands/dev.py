@@ -1,10 +1,9 @@
-import asyncio, os, sys, traceback
+import asyncio, os, sys
 
-from pathlib import Path
 from discord.ext import commands
 
 from stuff.funcs import embed, send
-from setup.config import SUCCESS, WARNING, ROOT
+from setup.config import ROOT
 
 class Dev(commands.Cog):
     def __init__(self, bot):
@@ -13,7 +12,7 @@ class Dev(commands.Cog):
     @commands.hybrid_command()
     @commands.is_owner()
     async def shutdown(self, ctx):
-        await send(ctx, "-# ok bro")
+        await send(ctx, "-# alright")
         self.log_command(ctx)
 
         async def close():
@@ -25,7 +24,7 @@ class Dev(commands.Cog):
     @commands.hybrid_command()
     @commands.is_owner()
     async def restart(self, ctx):
-        await send(ctx, "-# restarting... gimme a sec")
+        await send(ctx, "-# restarting...")
         self.log_command(ctx)
         print("restarting...")
         os.execv(sys.executable, [sys.executable] + sys.argv)
@@ -80,7 +79,6 @@ class Dev(commands.Cog):
                 await self.extension_error(ctx, file.stem, "reload", e)
 
         msg = ""
-        emoji = SUCCESS
 
         if ok:
             msg += f"-# reloaded {len(ok)}: **{', '.join(ok)}**"
@@ -89,10 +87,9 @@ class Dev(commands.Cog):
             msg += "\n"
 
         if failed:
-            emoji = WARNING
             msg += f"-# failed on {len(failed)}: **{', '.join(failed)}**"
 
-        await send(ctx, msg, emoji)
+        await send(ctx, msg)
         self.log_command(ctx)
 
     @commands.hybrid_command()
@@ -100,11 +97,13 @@ class Dev(commands.Cog):
     async def sync(self, ctx):
         try:
             synced = await self.bot.tree.sync()
+            print(f"Synced {len(synced)} commands\n")
             await send(ctx, f"-# successfully synced {len(synced)} command{'s' if len(synced) != 1 else ''}")
             self.log_command(ctx)
 
         except Exception as e:
-            await send(ctx, "-# failed to sync commands", WARNING)
+            print(f"Error syncing commands: {e}")
+            await send(ctx, "-# failed to sync commands")
             self.log_error(ctx, e)
 
             traceback.print_exception(type(e), e, e.__traceback__)
@@ -120,7 +119,7 @@ class Dev(commands.Cog):
         self.log_command(ctx)
 
         if not loaded:
-            return await send(ctx, "-# no extensions loaded", WARNING)
+            return await send(ctx, "-# no extensions loaded")
 
         await send(ctx, f"-# {len(loaded)}: **{', '.join(loaded)}**")
 
@@ -137,7 +136,7 @@ class Dev(commands.Cog):
         self.log_command(ctx)
 
         if path is None:
-            return await send(ctx, "-# available logs: `system`, `commands`, `errors`, `dev`", WARNING)
+            return await send(ctx, "-# available logs: `system`, `commands`, `errors`, `dev`")
 
         try:
             with path.open("r", encoding = "utf-8") as f:
@@ -152,7 +151,7 @@ class Dev(commands.Cog):
             await send(ctx, f"```log\n{text}\n```")
 
         except FileNotFoundError:
-            await send(ctx, "-# file not found", WARNING)
+            await send(ctx, "-# file not found")
 
     def log_command(self, ctx):
         self.bot.dev_logger.info(f"Command: {ctx.command}, Requested by: {ctx.author}, Channel: {ctx.channel}")
@@ -167,16 +166,16 @@ class Dev(commands.Cog):
         self.log_error(ctx, error)
 
         if isinstance(error, commands.ExtensionNotFound):
-            return await send(ctx, f"-# **{extension}** wasnt found", WARNING)
+            return await send(ctx, f"-# **{extension}** wasnt found")
 
         if isinstance(error, commands.ExtensionNotLoaded):
-            return await send(ctx, f"-# **{extension}** isnt loaded", WARNING)
+            return await send(ctx, f"-# **{extension}** isnt loaded")
 
         if isinstance(error, commands.ExtensionAlreadyLoaded):
-            return await send(ctx, f"-# **{extension}** is already loaded", WARNING)
+            return await send(ctx, f"-# **{extension}** is already loaded")
 
         if isinstance(error, commands.ExtensionFailed):
-            await send(ctx, f"-# failed to {action} **{extension}**", WARNING)
+            await send(ctx, f"-# failed to {action} **{extension}**")
 
             traceback.print_exception(
                 type(error.original),
