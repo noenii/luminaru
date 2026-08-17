@@ -20,4 +20,6 @@ version history
 
 0.6.0: role commands are done, fixed a minor bug. and probably best to mention rn this is a statbot? just displays info mainly
 
-0.7.0 channel commands done. info, perms and threads. and some reformatting and bug fixes
+0.7.0: channel commands done. info, perms and threads. and some reformatting and bug fixes
+
+0.7.1: fixed a bug, and grammatical mistake

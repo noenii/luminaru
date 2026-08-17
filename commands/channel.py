@@ -151,14 +151,14 @@ class Channel(commands.Cog):
         except (discord.Forbidden, AttributeError):
             art = []
 
-        all = act + art
+        a = act + art
 
-        if not all:
+        if not a:
             return await ctx.send(f"-# No threads found in {channel.mention}")
 
         entries = []
 
-        for thread in all:
+        for thread in a:
             entries.append(
                 f"{thread.mention} (**{thread.id}**)\n"
                 f"> Status: **{"Locked" if thread.locked else ("Archived" if thread.archived else "Active")}**\n"
