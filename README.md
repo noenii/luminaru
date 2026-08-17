@@ -19,3 +19,5 @@ version history
 0.5.1: server, channels and more to be added ig. role module being made, some minor bug fixes and changes throughout
 
 0.6.0: role commands are done, fixed a minor bug. and probably best to mention rn this is a statbot? just displays info mainly
+
+0.7.0 channel commands done. info, perms and threads. and some reformatting and bug fixes

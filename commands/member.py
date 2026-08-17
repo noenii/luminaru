@@ -80,8 +80,16 @@ class Member(commands.Cog):
     async def perms(self, ctx: commands.Context, member: discord.Member = None):
         member = member or ctx.author
         perms = list_perms(member)
-        pages = paginate(ctx, f"{member.global_name or member.display_name}'s Perms - {len(perms)}", perms, formatter = lambda p: f"-# {p}")
-        await send_pages(ctx, pages, buttons = ("prev", "next"))
+        pages = paginate(
+            ctx,
+            title = f"{member.global_name or member.display_name}'s Perms - {len(perms)}",
+            items = perms,
+            formatter = lambda p: f"-# {p}"
+        )
+        if len(pages) == 1:
+            await send(ctx, pages[0])
+        else:
+            await send_pages(ctx, pages, buttons = ("prev", "next"))
 
 async def setup(bot):
     await bot.add_cog(Member(bot))

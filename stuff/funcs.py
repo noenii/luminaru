@@ -97,13 +97,13 @@ def fetch_status(ctx, member: discord.Member = None):
     member = member or ctx.author
 
     status_map = {
-        discord.Status.online: "online",
-        discord.Status.idle: "idle",
-        discord.Status.dnd: "dnd",
-        discord.Status.offline: "offline",
+        discord.Status.online: "Online",
+        discord.Status.idle: "Idle",
+        discord.Status.dnd: "DND",
+        discord.Status.offline: "Offline",
     }
 
-    status = status_map.get(member.status, "offline")
+    status = status_map.get(member.status, "Offline")
 
     stat = ""
     custom_act = discord.utils.get(
@@ -123,23 +123,23 @@ def fetch_status(ctx, member: discord.Member = None):
             continue
 
         if isinstance(act, discord.Game):
-            lines.append(f"-# playing **{act.name}**")
+            lines.append(f"-# Playing **{act.name}**")
 
         elif isinstance(act, discord.Streaming):
-            lines.append(f"-# streaming **{act.name}** ({act.platform})")
+            lines.append(f"-# Streaming **{act.name}** ({act.platform})")
 
         elif isinstance(act, discord.Spotify):
-            lines.append(f"-# listening to **{act.title}** by **{act.artist}**")
+            lines.append(f"-# Listening to **{act.title}** by **{act.artist}**")
 
         elif isinstance(act, discord.Activity):
             if act.type == discord.ActivityType.watching:
-                lines.append(f"-# watching **{act.name}**")
+                lines.append(f"-# Watching **{act.name}**")
             elif act.type == discord.ActivityType.listening:
-                lines.append(f"-# listening to **{act.name}**")
+                lines.append(f"-# Listening to **{act.name}**")
             elif act.type == discord.ActivityType.playing:
-                lines.append(f"-# playing **{act.name}**")
+                lines.append(f"-# Playing **{act.name}**")
             elif act.type == discord.ActivityType.competing:
-                lines.append(f"-# competing in **{act.name}**")
+                lines.append(f"-# Competing in **{act.name}**")
             else:
                 lines.append(f"-# {act.type.name.title()} **{act.name}**")
 
@@ -177,7 +177,7 @@ def list_roles(ctx, member: discord.Member = None):
 
 def list_perms(member: discord.Member):
     if member.guild_permissions.administrator:
-        return ["administrator"]
+        return ["Administrator"]
 
     return [
         perm.replace("_", " ").title()

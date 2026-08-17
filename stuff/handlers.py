@@ -11,7 +11,7 @@ async def handle_command_not_found(ctx, error):
     e = embed(
         ctx,
         f"404: Command Not Found",
-        f"The command does not exist or was typed incorrectly.\n> Closest Command/s: {s}",
+        f"The command does not exist or was typed incorrectly.\n> Closest: {s}",
         0xED4245
     )
 
@@ -22,8 +22,8 @@ async def handle_missing_required_argument(ctx, error):
 
     e = embed(
         ctx,
-        f"400: Missing Required Argument(s)",
-        f"Missing Required Argument/s.\n> Correct Usage: `{u}`",
+        f"400: Missing Required Argument",
+        f"Missing Required Argument.\n> Usage: `{u}`",
         0xED4245
     )
 
@@ -34,8 +34,8 @@ async def handle_bad_argument(ctx, error):
 
     e = embed(
         ctx,
-        f"400: Invalid Arg/Args",
-        f"Invalid Argument/s.\n> Details: `{error}`\n> Usage: `{u}`",
+        f"400: Invalid Argument",
+        f"Invalid Argument.\n> Details: `{error}`\n> Usage: `{u}`",
         0xED4245
     )
 
@@ -46,8 +46,8 @@ async def handle_missing_permissions(ctx, error):
 
     e = embed(
         ctx,
-        f"403: You can't use this command",
-        f"You are missing permissions to use this command.\n> Permission/s: `{p}`",
+        f"403: You can\'t use this command",
+        f"You are missing permissions to use this command.\n> Permissions: `{p}`",
         0xED4245
     )
 

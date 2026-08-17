@@ -52,7 +52,7 @@ class Role(commands.Cog):
 
         r = [i for i in reversed(ctx.guild.roles) if not i.is_default()]
 
-        if len(r) == 1:
+        if not r:
             return await send(ctx, "-# This Server has no Roles")
 
         pages = paginate(
@@ -60,7 +60,7 @@ class Role(commands.Cog):
             title = f"**{ctx.guild.name}** - **{len(r)}**",
             items = r,
             per_page = 25,
-            formatter = lambda r: f"{r.mention} - {len(r.members)}"
+            formatter = lambda i: f"{i.mention} - {len(i.members)}"
         )
 
         await send_pages(ctx, pages, buttons = ("prev", "next"))
@@ -81,7 +81,7 @@ class Role(commands.Cog):
         if len(pages) == 1:
             await send(ctx, pages[0])
         else:
-            await send_pages(ctx, pages)
+            await send_pages(ctx, pages, buttons = ("prev", "next"))
 
 async def setup(bot):
     await bot.add_cog(Role(bot))

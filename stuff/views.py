@@ -99,7 +99,7 @@ class Paginator(discord.ui.View):
             view=self
         )
 
-    @discord.ui.button(emoji = "<<", style=discord.ButtonStyle.primary)
+    @discord.ui.button(label = "<<", style=discord.ButtonStyle.primary)
     async def first(self, interaction, button):
         self.index = 0
         await self.update(interaction)
@@ -145,7 +145,7 @@ async def send_pages(ctx, pages, *, timeout = 120, buttons = ("first", "prev", "
 
     view.message = msg
 
-def paginate(ctx, title: str, items: list, a = False, f = False, *, per_page: int = 10, formatter = str):
+def paginate(ctx, title: str, items: list, f = False, *, per_page: int = 10, formatter = str):
     if not items:
         items = ["None"]
 
@@ -162,8 +162,6 @@ def paginate(ctx, title: str, items: list, a = False, f = False, *, per_page: in
             "\n".join(formatter(item) for item in chunk)
         )
 
-        if a:
-            e.set_author
         if f:
             e.set_footer(text = f"{page}/{total}")
 

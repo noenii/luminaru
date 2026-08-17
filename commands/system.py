@@ -34,14 +34,17 @@ class System(commands.Cog):
         await send(ctx, f"-# WS: **{ws} ms**, API: **{api} ms**")
 
     @commands.hybrid_command()
+    @commands.is_owner()
     async def sys(self, ctx: commands.Context):
         await send(ctx, f"-# CPU: **{psutil.cpu_percent(interval = 0.1):.1f}%**, RAM: **{psutil.virtual_memory().percent}%**")
 
     @commands.hybrid_command()
+    @commands.is_owner()
     async def env(self, ctx: commands.Context):
         await send(ctx, f"-# Python: **{platform.python_version()}**, Discord.py: **{discord.__version__}**, OS: **{platform.system()} {platform.release()} {platform.machine()}**\n")
 
     @commands.hybrid_command()
+    @commands.is_owner()
     async def uptime(self, ctx: commands.Context):
         await send(ctx, f"-# **{fmt_time(int(time.time() - self.bot.start_time))}**")
 
