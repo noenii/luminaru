@@ -23,3 +23,5 @@ version history
 0.7.0: channel commands done. info, perms and threads. and some reformatting and bug fixes
 
 0.7.1: fixed a bug, and grammatical mistake
+
+0.7.2: screw oop im deleting some helper functions, new server commands and some bug fixes

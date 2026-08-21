@@ -2,7 +2,7 @@ import discord
 
 from discord.ext import commands
 
-from stuff.funcs import embed, send, ts, perm_check, list_roles
+from stuff.funcs import ts, perm_check, list_roles
 from stuff.views import paginate, send_pages
 
 class Role(commands.Cog):
@@ -11,10 +11,9 @@ class Role(commands.Cog):
 
     @commands.hybrid_command()
     async def role(self, ctx: commands.Context, role: discord.Role):
-        e = embed(
-            ctx,
-            f"**{role.name}**",
-            f"-# There are **{len(role.members)}** members with this role\n"
+        e = discord.Embed(
+            title = f"**{role.name}**",
+            description = f"-# There are **{len(role.members)}** members with this role\n"
             f"-# This role **{'is' if role.hoist else 'isn\'t'}** hoisted"
         )
 
@@ -25,35 +24,37 @@ class Role(commands.Cog):
             inline = False
         )
 
-        await send(ctx, e)
+        await ctx.send(embed = e)
 
     @commands.hybrid_command()
     async def roleinfo(self, ctx: commands.Context, role: discord.Role):
-        e = embed(
-            ctx,
-            "",
-            f"Hex: **{role.color.value}**\n"
+        e = discord.Embed(
+            description = f"Hex: **{role.color.value}**\n"
             f"ID: **{role.id}**\n"
             f"Pos: **{role.position}**\n"
             f"Hoist: **{role.hoist}**\n"
             f"Mention: **{role.mentionable}**"
         )
 
-        await send(ctx, e)
+        await ctx.send(embed = e)
 
     @commands.hybrid_command()
     async def roles(self, ctx: commands.Context, member: discord.Member = None):
         if member:
             if len(member.roles) == 1:
-                return await send(ctx, "-# Member has no Roles")
+                return await ctx.send("-# Member has no Roles")
 
-            e = embed(ctx, f"**{member.name}**'s Roles", f"-# {list_roles(ctx, member)}")
-            return await send(ctx, e)
+            e = discord.Embed(
+                title = f"**{member.name}**'s Roles",
+                description = f"-# {list_roles(ctx, member)}"
+            )
+
+            return await ctx.send(embed = e)
 
         r = [i for i in reversed(ctx.guild.roles) if not i.is_default()]
 
         if not r:
-            return await send(ctx, "-# This Server has no Roles")
+            return await ctx.send("-# This Server has no Roles")
 
         pages = paginate(
             ctx = ctx,
@@ -68,7 +69,7 @@ class Role(commands.Cog):
     @commands.hybrid_command()
     async def withrole(self, ctx: commands.Context, role: discord.Role):
         if not role.members:
-            return await send(ctx, "-# Role has no Members")
+            return await ctx.send("-# Role has no Members")
 
         pages = paginate(
             ctx = ctx,
@@ -79,7 +80,7 @@ class Role(commands.Cog):
         )
 
         if len(pages) == 1:
-            await send(ctx, pages[0])
+            await ctx.send(embed = pages[0])
         else:
             await send_pages(ctx, pages, buttons = ("prev", "next"))
 

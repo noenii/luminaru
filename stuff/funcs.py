@@ -36,39 +36,47 @@ def setup_logging():
 
     return system_logger, command_logger, error_logger, dev_logger
 
-def embed(ctx, title = None, desc = None, c = EMBED_COLOR):
-    e = discord.Embed(
-        title = title,
-        description = desc,
-        color = c
-    )
-
-    return e
-
-def container(text: str):
+def container(ctx, title = None, desc = None, image = None, buttons = None):
     view = discord.ui.LayoutView()
+    items = []
+
+    if title:
+        items.append(discord.ui.TextDisplay(title))
+    if desc:
+        items.append(discord.ui.TextDisplay(desc))
+
+    if image:
+        items.append(
+            discord.ui.MediaGallery(
+                discord.MediaGalleryItem(
+                    media = image
+                )
+            )
+        )
+
+    if buttons:
+        row = discord.ui.ActionRow()
+
+        for url, label, emoji in buttons:
+            row.add_item(
+                discord.ui.Button(
+                    style = discord.ButtonStyle.link,
+                    url = url,
+                    label = label,
+                    emoji = discord.PartialEmoji.from_str(emoji)
+                )
+            )
+
+        items.append(row)
 
     view.add_item(
         discord.ui.Container(
-            discord.ui.TextDisplay(text)
+            *items
+            # accent_color = c
         )
     )
 
     return view
-
-async def send(ctx, i = None):
-    try:
-        if isinstance(i, discord.Embed):
-            await ctx.send(embed = i)
-
-        elif isinstance(i, discord.ui.View):
-            await ctx.send(view = i)
-
-        elif isinstance(i, str):
-            await ctx.send(i)
-
-    except Exception as e:
-        print("SEND ERROR:", type(e).__name__, e)
 
 def ts(t, style: str = "R"):
     return f"<t:{int(t)}:{style}>"

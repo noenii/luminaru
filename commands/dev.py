@@ -2,7 +2,6 @@ import asyncio, os, sys, traceback
 
 from discord.ext import commands
 
-from stuff.funcs import embed, send
 from setup.config import ROOT
 
 class Dev(commands.Cog):
@@ -12,7 +11,7 @@ class Dev(commands.Cog):
     @commands.hybrid_command()
     @commands.is_owner()
     async def shutdown(self, ctx):
-        await send(ctx, "-# alright")
+        await ctx.send("-# alright")
         self.log_command(ctx)
 
         async def close():
@@ -24,7 +23,7 @@ class Dev(commands.Cog):
     @commands.hybrid_command()
     @commands.is_owner()
     async def restart(self, ctx):
-        await send(ctx, "-# restarting...")
+        await ctx.send("-# restarting...")
         self.log_command(ctx)
         print("restarting...")
         os.execv(sys.executable, [sys.executable] + sys.argv)
@@ -34,7 +33,7 @@ class Dev(commands.Cog):
     async def load(self, ctx, extension: str):
         try:
             await self.bot.load_extension(f"commands.{extension}")
-            await send(ctx, f"-# successfully loaded **{extension}**")
+            await ctx.send(f"-# successfully loaded **{extension}**")
             self.log_command(ctx)
         except Exception as e:
             await self.extension_error(ctx, extension, "load", e)
@@ -44,7 +43,7 @@ class Dev(commands.Cog):
     async def unload(self, ctx, extension: str):
         try:
             await self.bot.unload_extension(f"commands.{extension}")
-            await send(ctx, f"-# successfully unloaded **{extension}**")
+            await ctx.send(f"-# successfully unloaded **{extension}**")
             self.log_command(ctx)
         except Exception as e:
             await self.extension_error(ctx, extension, "unload", e)
@@ -54,7 +53,7 @@ class Dev(commands.Cog):
     async def reload(self, ctx, extension: str):
         try:
             await self.bot.reload_extension(f"commands.{extension}")
-            await send(ctx, f"-# successfully reloaded **{extension}**")
+            await ctx.send(f"-# successfully reloaded **{extension}**")
             self.log_command(ctx)
         except Exception as e:
             await self.extension_error(ctx, extension, "reload", e)
@@ -89,7 +88,7 @@ class Dev(commands.Cog):
         if failed:
             msg += f"-# failed on {len(failed)}: **{', '.join(failed)}**"
 
-        await send(ctx, msg)
+        await ctx.send(msg)
         self.log_command(ctx)
 
     @commands.hybrid_command()
@@ -98,12 +97,12 @@ class Dev(commands.Cog):
         try:
             synced = await self.bot.tree.sync()
             print(f"Synced {len(synced)} commands\n")
-            await send(ctx, f"-# successfully synced {len(synced)} command{'s' if len(synced) != 1 else ''}")
+            await ctx.send(f"-# successfully synced {len(synced)} command{'s' if len(synced) != 1 else ''}")
             self.log_command(ctx)
 
         except Exception as e:
             print(f"Error syncing commands: {e}")
-            await send(ctx, "-# failed to sync commands")
+            await ctx.send("-# failed to sync commands")
             self.log_error(ctx, e)
 
             traceback.print_exception(type(e), e, e.__traceback__)
@@ -119,9 +118,9 @@ class Dev(commands.Cog):
         self.log_command(ctx)
 
         if not loaded:
-            return await send(ctx, "-# no extensions loaded")
+            return await ctx.send("-# no extensions loaded")
 
-        await send(ctx, f"-# {len(loaded)}: **{', '.join(loaded)}**")
+        await ctx.send(f"-# {len(loaded)}: **{', '.join(loaded)}**")
 
     @commands.hybrid_command()
     @commands.is_owner()
@@ -136,7 +135,7 @@ class Dev(commands.Cog):
         self.log_command(ctx)
 
         if path is None:
-            return await send(ctx, "-# available logs: `system`, `commands`, `errors`, `dev`")
+            return await ctx.send("-# available logs: `system`, `commands`, `errors`, `dev`")
 
         try:
             with path.open("r", encoding = "utf-8") as f:
@@ -148,10 +147,10 @@ class Dev(commands.Cog):
             if len(text) > 1900:
                 text = text[-1900:]
 
-            await send(ctx, f"```log\n{text}\n```")
+            await ctx.send(f"```log\n{text}\n```")
 
         except FileNotFoundError:
-            await send(ctx, "-# file not found")
+            await ctx.send("-# file not found")
 
     def log_command(self, ctx):
         self.bot.dev_logger.info(f"Command: {ctx.command}, Requested by: {ctx.author}, Channel: {ctx.channel}")
@@ -166,16 +165,16 @@ class Dev(commands.Cog):
         self.log_error(ctx, error)
 
         if isinstance(error, commands.ExtensionNotFound):
-            return await send(ctx, f"-# **{extension}** wasnt found")
+            return await ctx.send(f"-# **{extension}** wasnt found")
 
         if isinstance(error, commands.ExtensionNotLoaded):
-            return await send(ctx, f"-# **{extension}** isnt loaded")
+            return await ctx.send(f"-# **{extension}** isnt loaded")
 
         if isinstance(error, commands.ExtensionAlreadyLoaded):
-            return await send(ctx, f"-# **{extension}** is already loaded")
+            return await ctx.send(f"-# **{extension}** is already loaded")
 
         if isinstance(error, commands.ExtensionFailed):
-            await send(ctx, f"-# failed to {action} **{extension}**")
+            await ctx.send(f"-# failed to {action} **{extension}**")
 
             traceback.print_exception(
                 type(error.original),

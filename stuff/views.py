@@ -2,8 +2,6 @@ import discord
 
 from math import ceil
 
-from stuff.funcs import embed
-
 class PageModal(discord.ui.Modal, title = "Go to Page"):
     page = discord.ui.TextInput(
         label = "Page Number",
@@ -95,8 +93,8 @@ class Paginator(discord.ui.View):
         self.update_buttons()
 
         await interaction.response.edit_message(
-            embed=self.pages[self.index],
-            view=self
+            embed = self.pages[self.index],
+            view = self
         )
 
     @discord.ui.button(label = "<<", style=discord.ButtonStyle.primary)
@@ -145,7 +143,7 @@ async def send_pages(ctx, pages, *, timeout = 120, buttons = ("first", "prev", "
 
     view.message = msg
 
-def paginate(ctx, title: str, items: list, f = False, *, per_page: int = 10, formatter = str):
+def paginate(ctx, t: str, items: list, *, per_page: int = 10, formatter = str):
     if not items:
         items = ["None"]
 
@@ -156,14 +154,10 @@ def paginate(ctx, title: str, items: list, f = False, *, per_page: int = 10, for
     for page, start in enumerate(range(0, len(items), per_page), start = 1):
         chunk = items[start:start + per_page]
 
-        e = embed(
-            ctx,
-            title,
-            "\n".join(formatter(item) for item in chunk)
+        e = discord.Embed(
+            title = t,
+            description = "\n".join(formatter(item) for item in chunk)
         )
-
-        if f:
-            e.set_footer(text = f"{page}/{total}")
 
         pages.append(e)
 

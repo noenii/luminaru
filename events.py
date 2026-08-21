@@ -1,6 +1,5 @@
 import discord, traceback, psutil
 
-from stuff.funcs import send, embed
 from stuff.handlers import ERROR_HANDLERS
 
 def register_events(bot):
@@ -72,14 +71,12 @@ def register_events(bot):
         if handler:
             return await handler(ctx, error)
 
-        e = embed(
-            ctx,
-            f"500! Internal Error! >:(",
-            "Something went wrong internally. The devs have been notified!",
-            0xED4245
+        e = discord.Embed(
+            title = f"500! Internal Error! >:(",
+            description = "Something went wrong internally. The devs have been notified!"
         )
 
-        await send(ctx, e)
+        await ctx.send(embed = e)
 
         log_msg = (f"Command: {ctx.command}, Requested by: {ctx.author} ({ctx.author.id}), Channel: {ctx.channel} ({ctx.channel.id}), Message: {ctx.message.content}, Type: {type(error).__name__}: {error}")
 

@@ -1,7 +1,8 @@
 import discord
 
 from discord.ext import commands
-from stuff.funcs import embed, send, ts
+
+from stuff.funcs import ts
 from stuff.views import paginate, send_pages
 
 class Channel(commands.Cog):
@@ -13,7 +14,10 @@ class Channel(commands.Cog):
         channel = channel or ctx.channel
 
         topic = getattr(channel, 'topic', None) or ""
-        e = embed(ctx, f"#{channel.name} — ({channel.id})", f"\n{topic}" if topic else "")  # all em dashes were inserted by a real person btw
+        e = discord.Embed(
+            title = f"#{channel.name} — ({channel.id})",    # all em dashes were inserted by a real person btw
+            description = f"\n{topic}" if topic else ""
+        )
         e.url = f"https://discord.com/channels/{ctx.guild.id}/{channel.id}"
         e.set_author(name = f"{ctx.guild.name}", icon_url = ctx.guild.icon.url if ctx.guild.icon else None)
 
@@ -93,7 +97,7 @@ class Channel(commands.Cog):
 
             e.add_field(name = "Invites", value = iv, inline = True)
 
-        await send(ctx, e)
+        await ctx.send(embed = e)
 
     @commands.hybrid_command()
     async def channelperms(self, ctx: commands.Context, channel: discord.abc.GuildChannel = None):
@@ -134,9 +138,9 @@ class Channel(commands.Cog):
         )
 
         if len(pages) == 1:
-            await send(ctx, pages[0])
+            await ctx.send(embed = pages[0])
         else:
-            await send_pages(ctx, pages, buttons = ("prev", "next"))
+            await send_pages(ctx, pages, buttons = ("prev", "page", "next"))
 
     @commands.hybrid_command()
     async def threads(self, ctx: commands.Context, channel: discord.TextChannel = None):
@@ -176,7 +180,7 @@ class Channel(commands.Cog):
         )
 
         if len(pages) == 1:
-            await send(ctx, pages[0])
+            await ctx.send(embed = pages[0])
         else:
             await send_pages(ctx, pages, buttons = ("prev", "next"))
 

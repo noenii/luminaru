@@ -1,7 +1,6 @@
 import discord
 
 from discord.ext import commands
-from stuff.funcs import send
 
 class empty(commands.Cog):
     def __init__(self, bot):
