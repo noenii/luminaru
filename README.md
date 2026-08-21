@@ -25,3 +25,5 @@ version history
 0.7.1: fixed a bug, and grammatical mistake
 
 0.7.2: screw oop im deleting some helper functions, new server commands and some bug fixes
+
+0.7.3: pagination bug fix

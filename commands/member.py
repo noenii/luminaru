@@ -83,7 +83,7 @@ class Member(commands.Cog):
         perms = list_perms(member)
         pages = paginate(
             ctx,
-            title = f"{member.global_name or member.display_name}'s Perms - {len(perms)}",
+            t = f"{member.global_name or member.display_name}'s Perms - {len(perms)}",
             items = perms,
             formatter = lambda p: f"-# {p}"
         )

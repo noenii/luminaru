@@ -96,7 +96,7 @@ class Server(commands.Cog):
         await ctx.send(embed = e)
 
     @commands.hybrid_command()
-    async def servericon(self, ctx: commands.Context):
+    async def icon(self, ctx: commands.Context):
         if not ctx.guild.icon:
             return await ctx.send("-# Server has No Icon")
 
@@ -109,7 +109,7 @@ class Server(commands.Cog):
         await ctx.send(view = v)
 
     @commands.hybrid_command()
-    async def serverbanner(self, ctx: commands.Context):
+    async def banner(self, ctx: commands.Context):
         if not ctx.guild.banner:
             return await ctx.send("-# Server has No Banner")
 
@@ -122,7 +122,7 @@ class Server(commands.Cog):
         await ctx.send(view = v)
 
     @commands.hybrid_command()
-    async def serversplash(self, ctx: commands.Context):
+    async def splash(self, ctx: commands.Context):
         if not ctx.guild.splash:
             return await ctx.send("-# Server has No Splash Banner")
 

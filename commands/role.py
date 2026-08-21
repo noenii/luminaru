@@ -58,7 +58,7 @@ class Role(commands.Cog):
 
         pages = paginate(
             ctx = ctx,
-            title = f"**{ctx.guild.name}** - **{len(r)}**",
+            t = f"**{ctx.guild.name}** - **{len(r)}**",
             items = r,
             per_page = 25,
             formatter = lambda i: f"{i.mention} - {len(i.members)}"
@@ -73,7 +73,7 @@ class Role(commands.Cog):
 
         pages = paginate(
             ctx = ctx,
-            title = f"**{role.name}** - **{len(role.members)}**",
+            t = f"**{role.name}** - **{len(role.members)}**",
             items = role.members,
             per_page = 15,
             formatter = lambda m: f"{m.mention}"

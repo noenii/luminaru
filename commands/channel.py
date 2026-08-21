@@ -10,7 +10,7 @@ class Channel(commands.Cog):
         self.bot = bot
 
     @commands.hybrid_command()
-    async def channelinfo(self, ctx: commands.Context, channel: discord.abc.GuildChannel = None):
+    async def channel(self, ctx: commands.Context, channel: discord.abc.GuildChannel = None):
         channel = channel or ctx.channel
 
         topic = getattr(channel, 'topic', None) or ""
@@ -131,7 +131,7 @@ class Channel(commands.Cog):
 
         pages = paginate(
             ctx,
-            title = f"Permissions for #{channel.name}",
+            t = f"Permissions for #{channel.name}",
             items = entries,
             per_page = 2,
             formatter = lambda item: f"{item}\n"
@@ -173,7 +173,7 @@ class Channel(commands.Cog):
 
         pages = paginate(
             ctx,
-            title = f"Threads in #{channel.name}",
+            t = f"Threads in #{channel.name}",
             items = entries,
             per_page = 5,
             formatter = lambda item: f"{item}\n"
