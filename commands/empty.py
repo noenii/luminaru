@@ -8,7 +8,7 @@ class empty(commands.Cog):
 
     @commands.hybrid_command()
     async def donothing(self, ctx):
-        await send(ctx, "yep")
+        await ctx.send("yep")
 
 async def setup(bot):
     await bot.add_cog(empty(bot))

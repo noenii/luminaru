@@ -1,6 +1,10 @@
-import discord, traceback, psutil
+import discord, traceback, psutil, colorama
 
+from colorama import Fore, Style
 from stuff.handlers import ERROR_HANDLERS
+from setup.config import DEV_CMD
+
+colorama.init(autoreset = True)
 
 def register_events(bot):
 
@@ -13,13 +17,10 @@ def register_events(bot):
 
         await bot.change_presence(
             status = discord.Status.dnd,
-            activity = discord.Activity(
-                type = discord.ActivityType.watching,
-                name = "/aki"
-            )
+            activity = discord.CustomActivity(name = "watching you")
         )
 
-        print(
+        print(Style.BRIGHT + Fore.BLUE +
             "\n=========================================\n\n"
             "      _           _                 \n"
             "     | |_ _ _____|_|___ ___ ___ _ _ \n"
@@ -33,33 +34,32 @@ def register_events(bot):
 
         try:
             synced = await bot.tree.sync()
-
-            print(f"Synced {len(synced)} commands\n")
-            bot.system_logger.info(f"Synced {len(synced)} commands.")
+            print(Style.BRIGHT + Fore.BLUE + f"[SYS] Successfully Synced {len(synced)} commands")
 
         except Exception as e:
-            bot.error_logger.error(f"Failed to sync commands in on_ready: {e}\n")
-            print(f"Error syncing commands: {e}")
+            print(Style.BRIGHT + Fore.RED + f"[ERR] Error syncing commands: {e}")
+            bot.error_logger.error(f"[ERR] Failed to sync commands: {e}")
 
-        bot.system_logger.info("Bot Started Up")
-
+        print(Style.BRIGHT + Fore.BLUE + "[SYS] Bot Started up")
+        bot.system_logger.info("[SYS] Bot started up")
         psutil.cpu_percent(interval = None)
 
+    '''
     @bot.event
     async def on_message(message):
         if message.author == bot.user:
             return
 
         await bot.process_commands(message)
+    '''
 
     @bot.event
     async def on_command_completion(ctx):
-        bot.command_logger.info(f"Command: {ctx.command}, Requested by: {ctx.author}, Channel: {ctx.channel}")
+        if ctx.command and ctx.command.name not in DEV_CMD:
+            print(Style.BRIGHT + Fore.BLUE + f"[CMD] Command: {ctx.command}, Requested by: {ctx.author}, Server: {ctx.guild}, Channel: {ctx.channel}")
 
     @bot.event
     async def on_error(event, *args, **kwargs):
-        print(f"\nERROR")
-        print(event)
         traceback.print_exc()
 
     @bot.event
@@ -71,16 +71,9 @@ def register_events(bot):
         if handler:
             return await handler(ctx, error)
 
-        e = discord.Embed(
-            title = f"500! Internal Error! >:(",
-            description = "Something went wrong internally. The devs have been notified!"
-        )
+        await ctx.reply("-# An Internal Error Occurred", mention_author = False)
 
-        await ctx.send(embed = e)
-
-        log_msg = (f"Command: {ctx.command}, Requested by: {ctx.author} ({ctx.author.id}), Channel: {ctx.channel} ({ctx.channel.id}), Message: {ctx.message.content}, Type: {type(error).__name__}: {error}")
-
-        bot.system_logger.error(log_msg)
-        bot.error_logger.error(log_msg)
-        print(log_msg)
-        traceback.print_exception(type(error), error, error.__traceback__)
+        tb = traceback.format_exception(type(error), error, error.__traceback__)
+        print(Style.BRIGHT + Fore.RED + f"[ERR] Command: {ctx.command}, Requested by: {ctx.author}, Server: {ctx.guild}, Channel: {ctx.channel}, Type: {type(error).__name__}")
+        print(Style.DIM + Fore.RED + f"{tb}")
+        bot.error_logger.error(f"[ERR] Command: {ctx.command}, Requested by: {ctx.author.id}, Server: {ctx.guild.id}, Channel: {ctx.channel.id}, Message: {ctx.message.content}, Type: {type(error).__name__}")

@@ -27,3 +27,5 @@ version history
 0.7.2: screw oop im deleting some helper functions, new server commands and some bug fixes
 
 0.7.3: pagination bug fix
+
+0.8.0: massive rework ig, cli got buffed, bunch of bug fixes, merged a lot of stuff

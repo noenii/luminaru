@@ -1,7 +1,6 @@
 import discord, logging, os
 
 from datetime import datetime, timezone
-from discord.ui import LayoutView
 
 from setup.config import ROOT, EMBED_COLOR
 
@@ -14,7 +13,7 @@ def setup_logging():
 
     os.makedirs(log_dir, exist_ok = True)
 
-    fmt = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    fmt = logging.Formatter("%(levelname)s - %(message)s - Time: %(asctime)s")
 
     def build_logger(name, filename, level):
         logger = logging.getLogger(name)
@@ -30,11 +29,9 @@ def setup_logging():
         return logger
 
     system_logger = build_logger("system", "system.log", logging.INFO)
-    command_logger = build_logger("commands", "commands.log", logging.INFO)
     error_logger = build_logger("errors", "errors.log", logging.ERROR)
-    dev_logger = build_logger("dev", "dev.log", logging.INFO)
 
-    return system_logger, command_logger, error_logger, dev_logger
+    return system_logger, error_logger
 
 def container(ctx, title = None, desc = None, image = None, buttons = None):
     view = discord.ui.LayoutView()

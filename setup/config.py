@@ -13,3 +13,5 @@ EMBED_COLOR = 0xFFFFFF
 # 0x242429
 # 16566995
 # 0x36393F is embed color i think
+
+DEV_CMD = {"shutdown", "restart", "load", "unload", "reload", "reloadall", "sync"}
