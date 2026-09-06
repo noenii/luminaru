@@ -176,7 +176,7 @@ class System(commands.Cog):
         path = logs.get(log.lower())
 
         if path is None:
-            return await ctx.send("-# Available logs: `sys`, `err`")
+            return await ctx.send("-# Available Logs: `sys`, `err`")
 
         try:
             with path.open("r", encoding = "utf-8") as f:
@@ -195,10 +195,10 @@ class System(commands.Cog):
 
     async def extension_error(self, ctx, extension, error):
         if isinstance(error, commands.ExtensionNotFound):
-            return await ctx.send(f"-# **{extension}** wasn't Found")
+            return await ctx.send(f"-# **{extension}** Was Not Found")
 
         if isinstance(error, commands.ExtensionNotLoaded):
-            return await ctx.send(f"-# **{extension}** isn't Loaded")
+            return await ctx.send(f"-# **{extension}** is Not Loaded")
 
         if isinstance(error, commands.ExtensionAlreadyLoaded):
             return await ctx.send(f"-# **{extension}** is Already Loaded")

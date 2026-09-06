@@ -29,3 +29,5 @@ version history
 0.7.3: pagination bug fix
 
 0.8.0: massive rework ig, cli got buffed, bunch of bug fixes, merged a lot of stuff
+
+0.8.1: error handlers got buffed, minor grammar fixes
