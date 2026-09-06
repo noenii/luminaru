@@ -13,7 +13,7 @@ intents.message_content = True
 intents.members = True
 intents.presences = True
 
-bot = commands.Bot(command_prefix = PREFIX, intents = intents)
+bot = commands.Bot(command_prefix = PREFIX, intents = intents, chunk_guilds_at_startup = True)
 
 bot.ready = False
 bot.start_time = time.time()
@@ -40,7 +40,7 @@ def console_listener(loop):
                 break
 
 async def main():
-    print(Style.BRIGHT + Fore.BLUE + "[SYS] Starting up...")
+    print(Style.BRIGHT + Fore.BLUE + "\n[SYS] Starting up...")
 
     extension_dir = os.path.join(ROOT, "commands")
     if os.path.exists(extension_dir):

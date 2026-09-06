@@ -56,7 +56,7 @@ class Member(commands.Cog):
         v = container(
             ctx,
             image = member.display_avatar.url,
-            buttons = [(member.display_avatar.url, None, "<:discord:1540204479373250610>")]
+            buttons = [(member.display_avatar.url, None, "<:discord:1546171146893004870>")]
         )
 
         await ctx.send(view = v)

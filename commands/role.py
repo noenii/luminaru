@@ -28,15 +28,7 @@ class Role(commands.Cog):
 
     @commands.hybrid_command()
     async def roleinfo(self, ctx: commands.Context, role: discord.Role):
-        e = discord.Embed(
-            description = f"Hex: **{role.color.value}**\n"
-            f"ID: **{role.id}**\n"
-            f"Pos: **{role.position}**\n"
-            f"Hoist: **{role.hoist}**\n"
-            f"Mention: **{role.mentionable}**"
-        )
-
-        await ctx.send(embed = e)
+        await ctx.send(f"-# Role: **{role.name}**, ID: **{role.id}**, Pos: **{role.position}**, Hoist: **{role.hoist}**, Mention: **{role.mentionable}**")
 
     @commands.hybrid_command()
     async def roles(self, ctx: commands.Context, member: discord.Member = None):
@@ -58,9 +50,9 @@ class Role(commands.Cog):
 
         pages = paginate(
             ctx = ctx,
-            t = f"**{ctx.guild.name}** - **{len(r)}**",
+            t = f"**Roles in {ctx.guild.name}** (**{len(r)}**)",
             items = r,
-            per_page = 25,
+            per_page = 20,
             formatter = lambda i: f"{i.mention} - {len(i.members)}"
         )
 

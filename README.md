@@ -31,3 +31,5 @@ version history
 0.8.0: massive rework ig, cli got buffed, bunch of bug fixes, merged a lot of stuff
 
 0.8.1: error handlers got buffed, minor grammar fixes
+
+0.8.2: some minor command changes

@@ -33,30 +33,30 @@ class Server(commands.Cog):
 
         total_counts = len(ctx.guild.stickers) + len(ctx.guild.emojis) + len(ctx.guild.roles)
         e.add_field(
-            name = f"Assets - {total_counts}",
+            name = f"Assets - **{total_counts}**",
             value = (
-                f"> Stickers: **{len(ctx.guild.stickers)}**\n"
-                f"> Emojis: **{len(ctx.guild.emojis)}**\n"
-                f"> Roles: **{len(ctx.guild.roles)}**"
+                f"> Stickers: `{len(ctx.guild.stickers)}`\n"
+                f"> Emojis: `{len(ctx.guild.emojis)}`\n"
+                f"> Roles: `{len(ctx.guild.roles)}`"
             ),
             inline = True
         )
 
         e.add_field(
-            name = f"Channels - {len(ctx.guild.channels)}",
+            name = f"Channels - **{len(ctx.guild.channels)}**",
             value = (
-                f"> Categories: **{len(ctx.guild.categories)}**\n"
-                f"> Text: **{len(ctx.guild.text_channels)}**\n"
-                f"> Voice: **{len(ctx.guild.voice_channels)}**"
+                f"> Categories: `{len(ctx.guild.categories)}`\n"
+                f"> Text: `{len(ctx.guild.text_channels)}`\n"
+                f"> Voice: `{len(ctx.guild.voice_channels)}`"
             ),
             inline = True
         )
 
         e.add_field(
-            name = f"Members - {ctx.guild.member_count}",
+            name = f"Members - **{ctx.guild.member_count}**",
             value = (
-                f"> Total: **{ctx.guild.member_count}**\n"
-                f"> Boosters: **{len(ctx.guild.premium_subscribers)}**"
+                f"> Total: `{ctx.guild.member_count}`\n"
+                f"> Boosters: `{len(ctx.guild.premium_subscribers)}`"
             ),
             inline = True
         )
@@ -64,9 +64,9 @@ class Server(commands.Cog):
         e.add_field(
             name = "Boosts",
             value = (
-                f"> Level: **{ctx.guild.premium_tier}**\n"
-                f"> Boosts: **{ctx.guild.premium_subscription_count or 0}**\n"
-                f"> Boosters: **{len(ctx.guild.premium_subscribers)}**"
+                f"> Level: `{ctx.guild.premium_tier}`\n"
+                f"> Boosts: `{ctx.guild.premium_subscription_count or 0}`\n"
+                f"> Boosters: `{len(ctx.guild.premium_subscribers)}`"
             ),
             inline = True
         )
@@ -74,9 +74,9 @@ class Server(commands.Cog):
         e.add_field(
             name = "Design",
             value = (
-                f"> Icon: {f"[View]({ctx.guild.icon.url})" if guild.icon else "**None**"}\n"
-                f"> Banner: {f"[View]({ctx.guild.banner.url})" if guild.banner else "**None**"}\n"
-                f"> Splash: {f"[View]({ctx.guild.splash.url})" if guild.splash else "**None**"}"
+                f"> Icon: {f"[View]({ctx.guild.icon.url})" if guild.icon else "`None`"}\n"
+                f"> Banner: {f"[View]({ctx.guild.banner.url})" if guild.banner else "`None`"}\n"
+                f"> Splash: {f"[View]({ctx.guild.splash.url})" if guild.splash else "`None`"}"
             ),
             inline = True
         )
@@ -84,9 +84,9 @@ class Server(commands.Cog):
         e.add_field(
             name = "System",
             value = (
-                f"> Verification: **{guild.verification_level.name}**\n"
-                f"> MFA: **{"Enabled" if ctx.guild.mfa_level else "Disabled"}**\n"
-                f"> Vanity: **{f"{ctx.guild.vanity_url_code}" if ctx.guild.vanity_url_code else "None"}**"
+                f"> Verification: `{guild.verification_level.name}`\n"
+                f"> MFA: `{"Enabled" if ctx.guild.mfa_level else "Disabled"}`\n"
+                f"> Vanity: `{f"{ctx.guild.vanity_url_code}" if ctx.guild.vanity_url_code else "`None`"}`"
             ),
             inline = True
         )
@@ -103,7 +103,7 @@ class Server(commands.Cog):
         v = container(
             ctx,
             image = ctx.guild.icon.url,
-            buttons = [(ctx.guild.icon.url, None, "<:discord:1540204479373250610>")]
+            buttons = [(ctx.guild.icon.url, None, "<:discord:1546171146893004870>")]
         )
 
         await ctx.send(view = v)
@@ -116,7 +116,7 @@ class Server(commands.Cog):
         v = container(
             ctx,
             image = ctx.guild.banner.url,
-            buttons = [(ctx.guild.banner.url, None, "<:discord:1540204479373250610>")]
+            buttons = [(ctx.guild.banner.url, None, "<:discord:1546171146893004870>")]
         )
 
         await ctx.send(view = v)
@@ -129,7 +129,7 @@ class Server(commands.Cog):
         v = container(
             ctx,
             image = ctx.guild.splash.url,
-            buttons = [(ctx.guild.splash.url, None, "<:discord:1540204479373250610>")]
+            buttons = [(ctx.guild.splash.url, None, "<:discord:1546171146893004870>")]
         )
 
         await ctx.send(view = v)
