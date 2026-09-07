@@ -1,4 +1,4 @@
-import discord, asyncio, os, platform, sys, time, colorama, psutil, subprocess
+import discord, asyncio, os, platform, sys, time, colorama, psutil
 
 from discord.ext import commands
 from colorama import Fore, Style

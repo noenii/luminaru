@@ -1,5 +1,4 @@
-import discord
-import difflib
+import discord, difflib
 
 from discord.ext import commands
 from sys import path
