@@ -40,3 +40,5 @@ version history
 0.8.4: added more cli commands, minor edits
 
 0.8.5: cli is completed? idk restarting the bot breaks it, so dont do it fr
+
+0.8.6: final back end update, logs renamed and cli finished

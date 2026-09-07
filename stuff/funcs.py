@@ -28,8 +28,8 @@ def setup_logging():
 
         return logger
 
-    system_logger = build_logger("system", "system.log", logging.INFO)
-    error_logger = build_logger("errors", "errors.log", logging.ERROR)
+    system_logger = build_logger("sys", "sys.log", logging.INFO)
+    error_logger = build_logger("err", "err.log", logging.ERROR)
 
     return system_logger, error_logger
 

@@ -127,7 +127,7 @@ def console_listener(bot, loop):
 
                 logs = {
                     p.stem.lower(): p
-                    for p in (ROOT / "logs").glob("*.log")
+                    for p in (ROOT/"logs").glob("*.log")
                 }
 
                 path = logs.get(log_name)
@@ -150,7 +150,7 @@ def console_listener(bot, loop):
                         text = text[-1900:]
 
                     print(Style.BRIGHT + Fore.MAGENTA + f"\n[DEV] {log_name}.log\n")
-                    print(Style.DIM + Fore.BLUE + text + "\n")
+                    print(Style.DIM + text)
 
                 except FileNotFoundError:
                     print(Fore.RED + "[ERR] File was not Found")
