@@ -12,7 +12,7 @@ class PageModal(discord.ui.Modal, title = "Go to Page"):
         try:
             page = int(self.page.value)
         except ValueError:
-            return await interaction.response.send_message("Invalid Page", ephemeral=True)
+            return await interaction.response.send_message("Invalid Page", ephemeral = True)
 
         if not 1 <= page <= len(self.view.pages):
             return await interaction.response.send_message(f"Enter a number between 1 and {len(self.view.pages)}.", ephemeral = True)
