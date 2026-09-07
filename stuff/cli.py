@@ -160,19 +160,22 @@ def console_listener(bot, loop):
                     print(Style.BRIGHT + Fore.MAGENTA + "[DEV] Bot Shutdown")
                     bot.system_logger.info("[DEV] Bot Shutdown")
                     asyncio.run_coroutine_threadsafe(bot.close(), loop)
-                    break
                 except Exception as e:
                     print(Fore.RED + f"[ERR] Error during shutdown: {e}")
                     bot.error_logger.error(f"[ERR] Error during shutdown: {e}")
-                    break
 
             case "restart":
-                try:
-                    print(Style.BRIGHT + Fore.MAGENTA + "[DEV] Bot Restarting...")
-                    bot.system_logger.info("[DEV] Bot Restarting...")
-                    os.execv(sys.executable, [sys.executable] + sys.argv)
-                except Exception as e:
-                    print(e)
+                if not args:
+                    print(Fore.YELLOW + "[WRN] Restarting Will Break CLI, Use [restart -f]")
+                    continue
+                if args[0].lower() == "-f":
+                    try:
+                        print(Style.BRIGHT + Fore.MAGENTA + "[DEV] Bot Restarting...")
+                        bot.system_logger.info("[DEV] Bot Restarting...")
+                        os.execv(sys.executable, [sys.executable] + sys.argv)
+                    except Exception as e:
+                        print(Fore.RED + f"[ERR] Error during Restart: {e}")
+                        bot.error_logger.error(f"[ERR] Error during Restart: {e}")
 
             case "help":
                 if not args:
@@ -204,7 +207,7 @@ def console_listener(bot, loop):
                     case "quit":
                         print(Style.BRIGHT + Fore.GREEN + "[AKI] Shuts Down The Bot")
                     case "restart":
-                        print(Style.BRIGHT + Fore.GREEN + "[AKI] Restarts The Bot (this one breaks the cli tho)")
+                        print(Style.BRIGHT + Fore.GREEN + "[AKI] Restarts The Bot (breaks the cli tho)")
                     case "help":
                         print(Style.BRIGHT + Fore.GREEN + "[AKI] Help Command")
                     case "list":

@@ -7,7 +7,7 @@ async def command_not_found(ctx, error):
     c = [cmd.name for cmd in ctx.bot.commands]
     m = difflib.get_close_matches(ctx.invoked_with, c, n = 3, cutoff = 0.7)
     s = (", ".join(f"**{i}**" for i in m) if m else None)
-    return await ctx.send(f"Did you Mean: {s}" if s else "Command Not Found")
+    return await ctx.send(f"-# Did you Mean: {s}" if s else "-# Command Not Found")
 
 async def missing_required_argument(ctx, error):
     u = f"{ctx.prefix}{ctx.command.qualified_name} {' '.join(f'<{p}>' for p in ctx.command.clean_params)}"

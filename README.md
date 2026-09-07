@@ -38,3 +38,5 @@ version history
 0.8.3: cli buff again, adding terminal cmds cus idk, some minor changes ig
 
 0.8.4: added more cli commands, minor edits
+
+0.8.5: cli is completed? idk restarting the bot breaks it, so dont do it fr
