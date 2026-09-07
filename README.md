@@ -1,4 +1,5 @@
-my stupid coding project
+Lumi
+a cool bot fr
 
 version history
 
@@ -24,7 +25,7 @@ version history
 
 0.7.1: fixed a bug, and grammatical mistake
 
-0.7.2: screw oop im deleting some helper functions, new server commands and some bug fixes
+0.7.2: screw oop im deleting some helper functions. new server commands and some bug fixes
 
 0.7.3: pagination bug fix
 
@@ -35,3 +36,5 @@ version history
 0.8.2: some minor command changes
 
 0.8.3: cli buff again, adding terminal cmds cus idk, some minor changes ig
+
+0.8.4: added more cli commands, minor edits

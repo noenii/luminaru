@@ -28,10 +28,11 @@ def register_events(bot):
             "     |_|___|_|_|_|_|_|_|__,|_| |___|\n\n"
             "               a cool bot?\n\n"
             "=========================================\n\n"
-            f"Successfully logged in as {bot.user}\n\n"
+            f"   Successfully logged in as {bot.user}\n\n"
             "=========================================\n"
         )
 
+        '''     this KILLS startup time
         try:
             synced = await bot.tree.sync()
             print(Style.BRIGHT + Fore.BLUE + f"[SYS] Successfully Synced {len(synced)} commands")
@@ -39,6 +40,7 @@ def register_events(bot):
         except Exception as e:
             print(Style.BRIGHT + Fore.RED + f"[ERR] Error syncing commands: {e}")
             bot.error_logger.error(f"[ERR] Failed to sync commands: {e}")
+        '''
 
         print(Style.BRIGHT + Fore.BLUE + "[SYS] Bot Started up")
         bot.system_logger.info("[SYS] Bot started up")
