@@ -3,7 +3,8 @@ import discord
 from discord.ext import commands
 
 from stuff.funcs import container, fetch_status, joinpos, list_roles, list_perms, ts
-from stuff.views import paginate, send_pages
+from stuff.views import Paginator, chunk_list
+from setup.config import EMBED_COLOR
 
 class Member(commands.Cog):
     def __init__(self, bot):
@@ -80,17 +81,44 @@ class Member(commands.Cog):
     @commands.hybrid_command()
     async def perms(self, ctx: commands.Context, member: discord.Member = None):
         member = member or ctx.author
-        perms = list_perms(member)
-        pages = paginate(
-            ctx,
-            t = f"{member.global_name or member.display_name}'s Perms - {len(perms)}",
-            items = perms,
-            formatter = lambda p: f"-# {p}"
+        if member.guild_permissions.administrator:
+            return await ctx.send("-# User has Administrator")
+
+        p = [
+            f"**{perm.replace('_', ' ').title()}**"
+            for perm, value in member.guild_permissions
+            if value
+        ]
+
+        if not p:
+            return await ctx.send("-# User Has no Perms")
+
+        chunks = list(chunk_list(p, 10))
+        total_pages = len(chunks)
+
+        containers = []
+        for i, chunk in enumerate(chunks, start=1):
+            c = discord.ui.Container()
+
+            c.add_item(discord.ui.Section(
+                discord.ui.TextDisplay(f"## {member.display_name}'s permissions — {len(p)}"), # idk why these dashes look better than regular dashes
+                accessory = discord.ui.Thumbnail(member.display_avatar.url)
+            ))
+            c.add_item(discord.ui.Separator())
+
+            c.add_item(discord.ui.TextDisplay("\n".join(chunk)))
+            c.add_item(discord.ui.Separator())
+
+            c.add_item(discord.ui.TextDisplay(f"-# Page {i}/{total_pages}"))
+
+            containers.append(c)
+
+        view = Paginator(
+            containers = containers,
+            author_id = ctx.author.id,
+            buttons = ["prev", "next", "search", "exit"]
         )
-        if len(pages) == 1:
-            await ctx.send(embed = pages[0])
-        else:
-            await send_pages(ctx, pages, buttons = ("prev", "next"))
+        await ctx.send(view = view)
 
 async def setup(bot):
     await bot.add_cog(Member(bot))

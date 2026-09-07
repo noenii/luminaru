@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 
 from stuff.funcs import ts, perm_check, list_roles
-from stuff.views import paginate, send_pages
+# from stuff.views import paginate, send_pages
 
 class Role(commands.Cog):
     def __init__(self, bot):
@@ -58,6 +58,7 @@ class Role(commands.Cog):
 
         await send_pages(ctx, pages, buttons = ("prev", "next"))
 
+    '''
     @commands.hybrid_command()
     async def withrole(self, ctx: commands.Context, role: discord.Role):
         if not role.members:
@@ -75,6 +76,7 @@ class Role(commands.Cog):
             await ctx.send(embed = pages[0])
         else:
             await send_pages(ctx, pages, buttons = ("prev", "next"))
+        '''
 
 async def setup(bot):
     await bot.add_cog(Role(bot))

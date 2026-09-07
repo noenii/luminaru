@@ -1,105 +1,112 @@
 import discord
-from math import ceil
 
-class PageModal(discord.ui.Modal, title = "Go to Page"):
-    page = discord.ui.TextInput(label = "Page Number", placeholder = "Enter a page number...")
+class PageSearchModal(discord.ui.Modal, title = "Go to Page"):
+    page_num = discord.ui.TextInput(
+        label = "Page Number",
+        placeholder = "Enter a Page Number",
+        required = True,
+        max_length = 5
+    )
 
-    def __init__(self, view):
+    def __init__(self, paginator_view):
         super().__init__()
-        self.view = view
+        self.paginator_view = paginator_view
 
     async def on_submit(self, interaction: discord.Interaction):
         try:
-            page = int(self.page.value)
+            target_page = int(self.page_num.value) - 1
+            max_pages = len(self.paginator_view.pages_data)
+
+            if 0 <= target_page < max_pages:
+                self.paginator_view.current_page = target_page
+                self.paginator_view.update_view()
+                await interaction.response.edit_message(
+                    view = self.paginator_view
+                )
+            else:
+                await interaction.response.send_message(
+                    f"Invalid Page, Enter a Number Between 1 and {max_pages}",
+                    ephemeral = True
+                )
         except ValueError:
-            return await interaction.response.send_message("Invalid Page", ephemeral = True)
+            await interaction.response.send_message("Enter a Number", ephemeral = True)
 
-        if not 1 <= page <= len(self.view.pages):
-            return await interaction.response.send_message(f"Enter a number between 1 and {len(self.view.pages)}.", ephemeral = True)
+class Paginator(discord.ui.LayoutView):
+    def __init__(
+        self,
+        containers: list[discord.ui.Container],
+        author_id: int,
+        buttons: list[str] = None
+    ):
+        super().__init__(timeout = 60)
+        self.containers = containers
+        self.author_id = author_id
+        self.current_page = 0
 
-        self.view.index = page - 1
-        self.view.update_buttons()
-        await interaction.response.edit_message(embed = self.view.pages[self.view.index], view = self.view)
+        if buttons is None:
+            buttons = ["prev", "next", "search", "exit"]
 
-class Paginator(discord.ui.View):
-    def __init__(self, pages, author, *, timeout = 120, buttons = ("first", "prev", "page", "next", "last")):
-        super().__init__(timeout = timeout)
-        self.pages = pages
-        self.author = author
-        self.index = 0
-        self.buttons = set(buttons)
+        self.buttons_map = {}
+        if "prev" in buttons:
+            btn = discord.ui.Button(emoji = "<:larrow:1546438657035075675>", style = discord.ButtonStyle.secondary)
+            btn.callback = self.go_prev
+            self.buttons_map["prev"] = btn
 
-        if "first" not in self.buttons: self.remove_item(self.first)
-        if "prev" not in self.buttons: self.remove_item(self.prev)
-        if "page" not in self.buttons: self.remove_item(self.page)
-        if "next" not in self.buttons: self.remove_item(self.next)
-        if "last" not in self.buttons: self.remove_item(self.last)
+        if "next" in buttons:
+            btn = discord.ui.Button(emoji = "<:rarrow:1546438717919469650>", style = discord.ButtonStyle.secondary)
+            btn.callback = self.go_next
+            self.buttons_map["next"] = btn
 
-        self.update_buttons()
+        if "search" in buttons:
+            btn = discord.ui.Button(emoji = "<:search:1546438616190947369>", style = discord.ButtonStyle.secondary)
+            btn.callback = self.go_search
+            self.buttons_map["search"] = btn
 
-    async def interaction_check(self, interaction):
-        if interaction.user != self.author:
-            await interaction.response.send_message("You can't use this", ephemeral = True)
+        if "exit" in buttons:
+            btn = discord.ui.Button(emoji = "<:stop:1546438775633092658>", style = discord.ButtonStyle.danger)
+            btn.callback = self.go_exit
+            self.buttons_map["exit"] = btn
+
+        self.update_view()
+
+    def update_view(self):
+        self.clear_items()
+
+        if "prev" in self.buttons_map:
+            self.buttons_map["prev"].disabled = self.current_page == 0
+        if "next" in self.buttons_map:
+            self.buttons_map["next"].disabled = self.current_page == len(self.containers) - 1
+
+        container = self.containers[self.current_page]
+
+        action_row = discord.ui.ActionRow(*self.buttons_map.values())
+        container.add_item(action_row)
+
+        self.add_item(container)
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user.id != self.author_id:
+            await interaction.response.send_message("This Button is Not For You", ephemeral = True)
             return False
         return True
 
-    def update_buttons(self):
-        last = len(self.pages) - 1
-        if "first" in self.buttons: self.first.disabled = self.index == 0
-        if "prev" in self.buttons: self.prev.disabled = self.index == 0
-        if "next" in self.buttons: self.next.disabled = self.index == last
-        if "last" in self.buttons: self.last.disabled = self.index == last
-        if "page" in self.buttons: self.page.label = f"{self.index + 1}/{len(self.pages)}"
+    async def go_prev(self, interaction: discord.Interaction):
+        self.current_page -= 1
+        self.update_view()
+        await interaction.response.edit_message(view = self)
 
-    async def update(self, interaction):
-        self.update_buttons()
-        await interaction.response.edit_message(embed = self.pages[self.index], view=self)
+    async def go_next(self, interaction: discord.Interaction):
+        self.current_page += 1
+        self.update_view()
+        await interaction.response.edit_message(view = self)
 
-    @discord.ui.button(label = "<<", style = discord.ButtonStyle.primary)
-    async def first(self, interaction, button):
-        self.index = 0
-        await self.update(interaction)
+    async def go_search(self, interaction: discord.Interaction):
+        await interaction.response.send_modal(PageSearchModal(self))
 
-    @discord.ui.button(label = "<", style = discord.ButtonStyle.primary)
-    async def prev(self, interaction, button):
-        self.index -= 1
-        await self.update(interaction)
+    async def go_exit(self, interaction: discord.Interaction):
+        self.stop()
+        await interaction.message.delete()
 
-    @discord.ui.button(label = "1/1", style = discord.ButtonStyle.secondary)
-    async def page(self, interaction, button):
-        await interaction.response.send_modal(PageModal(self))
-
-    @discord.ui.button(label = ">", style = discord.ButtonStyle.primary)
-    async def next(self, interaction, button):
-        self.index += 1
-        await self.update(interaction)
-
-    @discord.ui.button(label = ">>", style = discord.ButtonStyle.primary)
-    async def last(self, interaction, button):
-        self.index = len(self.pages) - 1
-        await self.update(interaction)
-
-    async def on_timeout(self):
-        for child in self.children:
-            child.disabled = True
-        if hasattr(self, "message"):
-            await self.message.edit(view = self)
-
-async def send_pages(ctx, pages, *, timeout = 120, buttons = ("first", "prev", "page", "next", "last")):
-    view = Paginator(pages = pages, author = ctx.author, timeout = timeout, buttons = buttons)
-    msg = await ctx.send(embed = pages[0], view = view)
-    view.message = msg
-
-def paginate(ctx, t: str, items: list, *, per_page: int = 10, formatter = str):
-    if not items:
-        items = ["None"]
-
-    pages = []
-    for page, start in enumerate(range(0, len(items), per_page), start = 1):
-        chunk = items[start:start + per_page]
-        e = discord.Embed(
-            title=t,
-            description="\n".join(formatter(item) for item in chunk)
-        )
-        pages.append(e)
-    return pages
+def chunk_list(items: list, per_page: int):
+    for i in range(0, len(items), per_page):
+        yield items[i : i + per_page]

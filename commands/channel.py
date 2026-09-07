@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 
 from stuff.funcs import ts
-from stuff.views import paginate, send_pages
+# from stuff.views import paginate, send_pages
 
 class Channel(commands.Cog):
     def __init__(self, bot):
@@ -98,7 +98,7 @@ class Channel(commands.Cog):
             e.add_field(name = "Invites", value = iv, inline = True)
 
         await ctx.send(embed = e)
-
+'''
     @commands.hybrid_command()
     async def channelperms(self, ctx: commands.Context, channel: discord.abc.GuildChannel = None):
         channel = channel or ctx.channel
@@ -183,6 +183,6 @@ class Channel(commands.Cog):
             await ctx.send(embed = pages[0])
         else:
             await send_pages(ctx, pages, buttons = ("prev", "next"))
-
+'''
 async def setup(bot):
     await bot.add_cog(Channel(bot))
