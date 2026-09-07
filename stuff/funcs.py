@@ -1,4 +1,4 @@
-import discord, logging, os
+import discord, logging, os, sys
 
 from datetime import datetime, timezone
 

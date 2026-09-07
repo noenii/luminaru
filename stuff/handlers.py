@@ -7,8 +7,8 @@ from sys import path
 async def command_not_found(ctx, error):
     c = [cmd.name for cmd in ctx.bot.commands]
     m = difflib.get_close_matches(ctx.invoked_with, c, n = 3, cutoff = 0.7)
-    s = ("\n".join(f"**{i}**" for i in m) if m else "No similar commands found.")
-    return await ctx.send(f"-# Command not Found, Closest: {s}")
+    s = (", ".join(f"**{i}**" for i in m) if m else None)
+    return await ctx.send(f"Did you Mean: {s}" if s else "Command Not Found")
 
 async def missing_required_argument(ctx, error):
     u = f"{ctx.prefix}{ctx.command.qualified_name} {' '.join(f'<{p}>' for p in ctx.command.clean_params)}"
@@ -30,7 +30,7 @@ async def missing_any_role(ctx, error):
     return await ctx.send(f"-# Missing Roles: **{r}**")
 
 async def command_on_cooldown(ctx, error):
-    return await ctx.send(content=f"-# Wait **{round(error.retry_after, 1)} s**", delete_after=error.retry_after)
+    return await ctx.send(content = f"-# Wait **{round(error.retry_after, 1)} s**", delete_after = error.retry_after)
 
 async def bot_missing_permissions(ctx, error):
     p = "**, **".join(p.replace("_", " ").title() for p in error.missing_permissions)

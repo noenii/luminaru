@@ -1,10 +1,11 @@
-import asyncio, discord, time, threading, os, sys, colorama
+import discord, asyncio, time, threading, colorama, os
 
 from discord.ext import commands
 from colorama import Fore, Style
 
 from setup.config import TOKEN, PREFIX, ROOT
-from stuff.funcs import setup_logging
+from stuff.funcs import setup_logging, fmt_time
+from stuff.cli import console_listener
 
 from events import register_events
 
@@ -15,29 +16,12 @@ intents.presences = True
 
 bot = commands.Bot(command_prefix = PREFIX, intents = intents, chunk_guilds_at_startup = True)
 
+colorama.init(autoreset = True)
+
 bot.ready = False
 bot.start_time = time.time()
 
 bot.system_logger, bot.error_logger = setup_logging()
-colorama.init(autoreset = True)
-
-def console_listener(loop):
-    while not bot.is_closed():
-        try:
-            cmd = input().lower().strip()
-        except (EOFError, KeyboardInterrupt):
-            break
-
-        if cmd == "quit":
-            try:
-                print(Style.BRIGHT + Fore.BLUE + "[SYS] Bot Shutdown")
-                bot.system_logger.info("[SYS] Bot Shutdown")
-                asyncio.run_coroutine_threadsafe(bot.close(), loop)
-                break
-            except Exception as e:
-                print(Fore.RED + f"[ERR] Error during shutdown: {e}")
-                bot.error_logger.error(f"[ERR] Error during shutdown: {e}")
-                break
 
 async def main():
     print(Style.BRIGHT + Fore.BLUE + "\n[SYS] Starting up...")
@@ -71,8 +55,7 @@ async def main():
 
     register_events(bot)
 
-    loop = asyncio.get_running_loop()
-    threading.Thread(target = console_listener, args = (loop,), daemon = True).start()
+    threading.Thread(target = console_listener, args = (bot, asyncio.get_running_loop()), daemon = True).start()
 
     async with bot:
         await bot.start(TOKEN)

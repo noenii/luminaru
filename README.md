@@ -33,3 +33,5 @@ version history
 0.8.1: error handlers got buffed, minor grammar fixes
 
 0.8.2: some minor command changes
+
+0.8.3: cli buff again, adding terminal cmds cus idk, some minor changes ig

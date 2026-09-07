@@ -26,10 +26,7 @@ class System(commands.Cog):
 
         end = time.time()
 
-        ws = round(self.bot.latency * 1000)
-        api = round((end - start) * 1000)
-
-        await ctx.send(f"-# WS: **{ws} ms**, API: **{api} ms**")
+        await ctx.send(f"-# WS: **{round(self.bot.latency * 1000)} ms**, API: **{round((end - start) * 1000)} ms**")
 
         if ctx.message:
             try:
@@ -45,7 +42,7 @@ class System(commands.Cog):
     @commands.hybrid_command()
     @commands.is_owner()
     async def env(self, ctx: commands.Context):
-        await ctx.send(f"-# Python: **{platform.python_version()}**, Discord.py: **{discord.__version__}**, OS: **{platform.system()} {platform.release()} {platform.machine()}**\n")
+        await ctx.send(f"-# Python: **{platform.python_version()}**, Discord.py: **{discord.__version__}**, OS: **{platform.system()} {platform.release()} {platform.machine()}**")
 
     @commands.hybrid_command()
     @commands.is_owner()
